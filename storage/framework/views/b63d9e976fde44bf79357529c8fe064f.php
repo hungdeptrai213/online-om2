@@ -1,8 +1,6 @@
-@extends('layouts.admin')
+<?php $__env->startSection('title', 'Bảng điều khiển'); ?>
 
-@section('title', 'Bảng điều khiển')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <div class="page-card">
         <h2 style="margin:0 0 8px;">Tổng quan</h2>
         <p class="muted" style="margin:0 0 12px;">Đây là layout mới cho khu vực admin. Các menu đã sẵn sàng để gắn CRUD cho users, students, khóa học, chương, bài học, danh mục, form đăng ký, lịch học, tài liệu, bình luận.</p>
@@ -24,4 +22,6 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\online-om\resources\views\admin\dashboard.blade.php ENDPATH**/ ?>
