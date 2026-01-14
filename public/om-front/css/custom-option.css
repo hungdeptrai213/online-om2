@@ -1,0 +1,394 @@
+/* Custom-select */
+
+/* .select-body {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    margin: 5px 0 20px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.select-body select {
+    height: 100%;
+    width: 100%;
+    border: unset;
+    appearance: none;
+    padding: 0 30px 0 10px;
+}
+
+
+.select-body select:focus-visible {
+    outline: -webkit-focus-ring-color auto 0px;
+} */
+
+/* .dropdown-el {
+  min-width: 12em;
+  position: relative;
+  display: inline-block;
+  margin-right: 1em;
+  min-height: 2em;
+  max-height: 2em;
+  overflow: hidden;
+  top: 0.5em;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  color: #444;
+  outline: none;
+  border: 0.06em solid transparent;
+  border-radius: 1em;
+  background-color: #b2d6f2;
+  transition: all 0.3s ease-in-out;
+  width: 100%;
+}
+
+.dropdown-el input {
+  width: 1px;
+  height: 1px;
+  display: inline-block;
+  position: absolute;
+  opacity: 0.01;
+}
+
+.dropdown-el input:focus + label {
+  background: #def;
+}
+
+.dropdown-el input:checked + label {
+  display: block;
+  border-top: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.dropdown-el input:checked + label:nth-child(2) {
+  margin-top: 0;
+  position: relative;
+}
+
+.dropdown-el label {
+  border-top: 0.06em solid #d9d9d9;
+  display: block;
+  height: 2em;
+  line-height: 2em;
+  padding-left: 1em;
+  padding-right: 3em;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.3s ease-in-out;
+}
+
+.dropdown-el label:nth-child(2) {
+  margin-top: 2em;
+  border-top: 0.06em solid #d9d9d9;
+}
+
+.dropdown-el::after {
+  content: "";
+  position: absolute;
+  right: 0.8em;
+  top: 0.9em;
+  border: 0.3em solid #3694d7;
+  border-color: #3694d7 transparent transparent transparent;
+  transition: all 0.4s ease-in-out;
+}
+
+.dropdown-el.expanded {
+  border: 0.06em solid #3694d7;
+  background: #fff;
+  border-radius: 0.25em;
+  padding: 0;
+  box-shadow: rgba(0, 0, 0, 0.1) 3px 3px 5px 0px;
+  max-height: 15em;
+}
+
+.dropdown-el.expanded label {
+  border-top: 0.06em solid #d9d9d9;
+}
+
+.dropdown-el.expanded label:hover {
+  color: #3694d7;
+}
+
+.dropdown-el.expanded input:checked + label {
+  color: #3694d7;
+}
+
+.dropdown-el.expanded::after {
+  transform: rotate(-180deg);
+  top: 0.55em;
+} */
+
+
+
+#basic-select  {
+  appearance: none;
+  @supports (appearance: base-select) {
+    @media (hover: hover) {
+      &,
+      &::picker(select) {
+        appearance: base-select;
+      }
+    }
+  }
+}
+
+#basic-select {
+    width: 100%;
+  /* display: flex;
+  justify-content: space-between; */
+  min-width: 300px;
+  align-items: center;
+  color: black;
+  padding-block: 10px;
+  padding-inline: 30px 40px;
+  border-radius: 30px;
+  border: unset;
+  cursor: pointer;
+  font-weight: 700;
+  background: #F4F3EF
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%23FFF' class='size-6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='m19.5 8.25-7.5 7.5-7.5-7.5' /%3E%3C/svg%3E%0A")
+    right 10px center / 20px no-repeat;
+  @media (hover: hover) {
+    @supports (appearance: base-select) {
+      padding-inline: 20px;
+      background-image: none;
+      &::picker-icon {
+        content: "";
+        width: 20px;
+        height: 20px;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+        transition: rotate 0.2s ease-out;
+        /* display: none; */
+        /* margin-left: 0; */
+      }
+      &:open::picker-icon {
+        rotate: 180deg;
+      }
+      &::picker(select) {
+        padding: 0;
+        margin-top: 5px;
+        border: 0px solid indigo;
+        background: #F4F3EF;
+        border-radius: 20px;
+        font-weight: 400;
+        
+        opacity: 0;
+        height: 0;
+        overflow: clip;
+        
+        box-shadow: 0 0 0.4rem rgba(0, 0, 0, 0.4);
+        transition: height 0.5s ease-out, opacity 0.5s ease-out, overlay 0.5s,
+          display 0.5s;
+
+        transition-behavior: allow-discrete;
+;
+      }
+      &:open::picker(select) {
+        opacity: 1;
+        height: calc-size(auto, size);
+        overflow: auto;
+        @starting-style {
+          opacity: 0;
+          height: 0;
+        }
+      }
+      option {
+        text-align: center !important;
+        padding: 15px 20px;
+        border-top: 0px solid indigo;
+        cursor: pointer;
+        transition-property: color, background;
+        transition-duration: 0.2s;
+        transition-timing-function: ease-out;
+        &:where(:hover, :focus, :active) {
+          background: unset;
+          color: black;
+        }
+        &:checked {
+          background: unset;
+          color: black;
+        }
+        &::checkmark {
+          display: none;
+        }
+        &:first-child {
+          border: 0;
+        }
+      }
+    }
+  }
+}
+
+
+
+.custom-select {
+  position: relative;
+}
+
+.custom-select select {
+  display: none; /*hide original SELECT element:*/
+}
+
+.select-selected {
+  background-color: var(--bs-body-bg);
+  font-size: 1.5rem ;
+  text-align: center ;
+    font-weight: 700;
+    box-shadow: var(--bs-box-shadow-sm) ;
+ border-radius: var(--bs-border-radius-pill) ;
+ padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+
+/*style the arrow inside the select element:*/
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 45%;
+  right: 7%;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #000000 transparent transparent transparent;
+}
+
+/*point the arrow upwards when the select box is open (active):*/
+.select-selected.select-arrow-active:after {
+  /* border-color: transparent transparent #000000 transparent;
+  top: 37%; */
+}
+
+/*style the items (options), including the selected item:*/
+.select-items div,.select-selected {
+  color: black;
+  padding: unset;
+  border: 1px solid transparent;
+  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  cursor: pointer;
+  user-select: none;
+  padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+}
+
+/*style items (options):*/
+.select-items {
+  position: absolute;
+  background-color: var(--bs-body-bg);
+  top: 120%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  font-size: 1.5rem ;
+  text-align: center ;
+    font-weight: 700;
+    box-shadow: var(--bs-box-shadow-sm) ;
+    border-radius: 2rem;
+    overflow: hidden;
+}
+
+/*hide the items when the select box is closed:*/
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+
+/* ///  END DECORATION CSS  ///  */
+
+.icon_select_mate {
+  position: absolute;
+  top:20px;
+  right: 2%;
+  font-size: 16px;
+    height: 22px;
+  transition: all 275ms;
+}
+
+.select_mate {
+  position: relative;
+  float: left;
+  min-width: 300px;
+  width: 300px;
+  min-height: 60px;
+  font-family: 'Roboto';
+  color: #777;
+  font-weight: 300;
+  /* box-shadow: 1px 2px 10px -2px rgba(0,0,0,0.3);
+  border-radius: 3px; */
+  transition: all 375ms ease-in-out;
+/* Oculto el elemento select */
+  select {
+  position: absolute;
+  overflow: hidden;
+  height: 0px;
+  opacity: 0;  
+    z-index: -1;
+  }
+}
+
+.cont_list_select_mate {
+  position: relative;
+  float: left;
+  width: 100%;
+}
+
+.cont_select_int {
+ position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: 999;
+  overflow: hidden;
+  height: 0px;
+  width: 100%;
+  background-color: #fff;
+  padding: 0px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  border-radius: 0px 0px 3px 3px;
+  box-shadow: 1px 4px 10px -2px rgba(0, 0, 0, 0.2);
+  transition: all 375ms ease-in-out;
+
+	li {
+	position: relative;
+    float: left;
+    width: 100%;
+    border-bottom:1px solid #E0E0E0;
+    background-color: #F5F5F5;
+    list-style-type: none;
+    padding: 10px 2%;
+    margin: 0px;  
+    transition: all 275ms ease-in-out;
+    display: block;
+    cursor:pointer;
+		
+		&:last-child {
+        border-radius: 3px;
+        border-bottom:0px; 
+
+        }
+         &:hover {
+		background-color: #EEEEEE;
+		 } 
+     }
+
+   .active {
+   background-color: #EEEEEE;
+   }
+
+}
+
+.selecionado_opcion {
+    padding: 20px 2%;
+    width: 96%;
+    display: block;
+    margin: 0px;
+    cursor: pointer;
+}
