@@ -1,0 +1,56 @@
+﻿@extends('student.layouts.app')
+
+@section('content')
+
+
+        <!-- FlexBox -->
+        <div class="container mt-6">
+            <div class="row justify-content-center filter-search">
+                <div class="col-md-8 col-lg-6 rounded-pill shadow-sm">
+                    <ul class="list-unstyled py-2 px-xl-4 px-xxl-5 d-flex justify-content-between position-relative mb-0"
+                        id="mainNav">
+                        <li class=""><a href="" class="btn fw-bold fs-2 border-0">Trang Chủ</a></li>
+                        <li class=""><a href="" class="btn fw-bold fs-2 border-0 active">Thư Viện</a></li>
+                        <li class=""><a href="" class="btn fw-bold fs-2 border-0">Đề Xuất</a></li>
+                        <li class=""><a href="" class="btn fw-bold fs-2 border-0">Nổi bật</a></li>
+                        <li class=""><a href="" class="btn fw-bold fs-2 border-0">Mới Ra</a></li>
+                        <button class="btn px-0 my-search-toggle my-search-toggle search-icon" type=""
+                            id="openSearch"><i class="fa-solid fa-magnifying-glass fs-2"></i></button>
+
+                    </ul>
+
+                    <form class=" d-flex bg-body h-100 rounded-pill py-2 px-xl-4 px-xxl-5 d-none search-3" role="search"
+                        style="" id="searchBar">
+                        <input class="form-control bg-transparent text-center fs-1 fw-bold" type="search"
+                            placeholder="Bạn muốn nghe gì nào?" aria-label="Search" />
+                        <button class="btn px-0 me-2" type="submit"><i
+                                class="fa-solid fa-magnifying-glass fs-2"></i></button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row d-sm-block d-lg-none">
+                <div class="col-12">
+                    <form class="d-flex rounded-pill py-2 search-4 rounded-pill shadow-sm px-3 search-4" role="search"
+                        style="">
+                        <input class="form-control bg-transparent text-center fs-2 fw-bold" type="search"
+                            placeholder="Bạn muốn nghe gì nào?" aria-label="Search" />
+                        <button class="btn px-0 me-2" type="submit"><i
+                                class="fa-solid fa-magnifying-glass fs-2"></i></button>
+                    </form>
+
+
+                </div>
+                <ul class="list-unstyled py-2 px-xl-4 px-xxl-5 d-flex justify-content-between mt-4 mb-0 overflow-x-auto text-nowrap mobile-category"
+                    style="max-height: 200px;">
+                    <li class=""><a href="" class="btn fw-bold fs-2 border-0 ">Trang Chủ</a></li>
+                    <li class=""><a href="" class="btn fw-bold fs-2 border-0 ">Thư Viện</a></li>
+                    <li class=""><a href="" class="btn fw-bold fs-2 border-0 ">Đề Xuất</a></li>
+                    <li class=""><a href="" class="btn fw-bold fs-2 border-0 ">Nổi bật</a></li>
+                    <li class=""><a href="" class="btn fw-bold fs-2 border-0 ">Mới Ra</a></li>
+
+                </ul>
+            </div>
+        </div>
+
+        

@@ -13,7 +13,7 @@ class CourseController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Course::with('category');
+        $query = Course::with(['categories', 'category']);
 
         if ($request->filled('q')) {
             $q = $request->string('q');
@@ -29,7 +29,12 @@ class CourseController extends Controller
         }
 
         if ($request->filled('category_id')) {
-            $query->where('course_category_id', $request->integer('category_id'));
+            $categoryId = $request->integer('category_id');
+            $query->where(function ($builder) use ($categoryId) {
+                $builder->whereHas('categories', function ($q) use ($categoryId) {
+                    $q->where('course_category_id', $categoryId);
+                })->orWhere('course_category_id', $categoryId);
+            });
         }
 
         $courses = $query->latest()->paginate(10)->withQueryString();
@@ -48,19 +53,24 @@ class CourseController extends Controller
     {
         $data = $this->validatedData($request);
         $data['slug'] = $data['slug'] ?? Str::slug($data['title']);
+        $categoryIds = $data['category_ids'] ?? [];
+        unset($data['category_ids']);
+        $data['course_category_id'] = $categoryIds[0] ?? null;
 
         if ($request->hasFile('thumbnail_upload')) {
             $path = $request->file('thumbnail_upload')->store('thumbnails', 'public');
             $data['thumbnail'] = 'storage/' . $path;
         }
 
-        Course::create($data);
+        $course = Course::create($data);
+        $course->categories()->sync($categoryIds);
 
         return redirect()->route('admin.courses.index')->with('msg', 'Tạo khóa học thành công.');
     }
 
     public function edit(Course $course)
     {
+        $course->load('categories');
         $categories = CourseCategory::orderBy('name')->get();
         return view('admin.courses.edit', compact('course', 'categories'));
     }
@@ -69,13 +79,21 @@ class CourseController extends Controller
     {
         $data = $this->validatedData($request, $course->id);
         $data['slug'] = $data['slug'] ?? Str::slug($data['title']);
+        $categoryIds = $data['category_ids'] ?? [];
+        unset($data['category_ids']);
+        $data['course_category_id'] = $categoryIds[0] ?? null;
 
+        $currentThumbnail = $course->thumbnail;
         if ($request->hasFile('thumbnail_upload')) {
             $path = $request->file('thumbnail_upload')->store('thumbnails', 'public');
             $data['thumbnail'] = 'storage/' . $path;
+        } else {
+            // Giữ nguyên thumbnail cũ nếu không upload mới
+            $data['thumbnail'] = $currentThumbnail;
         }
 
         $course->update($data);
+        $course->categories()->sync($categoryIds);
 
         return redirect()->route('admin.courses.index')->with('msg', 'Cập nhật khóa học thành công.');
     }
@@ -99,7 +117,8 @@ class CourseController extends Controller
         return $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'slug' => $slugRule,
-            'course_category_id' => ['nullable', 'exists:course_categories,id'],
+            'category_ids' => ['nullable', 'array'],
+            'category_ids.*' => ['integer', 'exists:course_categories,id'],
             'price' => ['required', 'numeric', 'min:0'],
             'sale_price' => ['nullable', 'numeric', 'min:0'],
             'short_description' => ['nullable', 'string', 'max:500'],

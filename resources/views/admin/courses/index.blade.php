@@ -60,7 +60,15 @@
                                 <div style="color:#8ea0c1;font-size:13px;">Tác giả: {{ $course->author }}</div>
                             @endif
                         </td>
-                        <td style="padding:12px;border-bottom:1px solid #f1f2f6;">{{ $course->category?->name ?? '—' }}</td>
+                        <td style="padding:12px;border-bottom:1px solid #f1f2f6;">
+                            @php
+                                $categoryNames = $course->categories->pluck('name')->all();
+                                if (!$categoryNames && $course->category?->name) {
+                                    $categoryNames[] = $course->category->name;
+                                }
+                            @endphp
+                            {{ $categoryNames ? implode(', ', $categoryNames) : '—' }}
+                        </td>
                         <td style="padding:12px;border-bottom:1px solid #f1f2f6;">
                             <div style="font-weight:700;">{{ number_format((float)$course->price, 0, ',', '.') }}đ</div>
                             @if($course->sale_price)

@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+﻿@extends('layouts.admin')
 
 @section('title', 'Thêm khóa học')
 
@@ -41,12 +41,13 @@
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
                 <div>
                     <label style="font-weight:700;">Danh mục</label>
-                    <select name="course_category_id" style="width:100%;margin-top:6px;padding:10px 12px;border:1px solid #e3e8f1;border-radius:10px;">
-                        <option value="">-- Chọn danh mục --</option>
+                    @php($selectedCategories = (array) old('category_ids', []))
+                    <select name="category_ids[]" multiple style="width:100%;margin-top:6px;padding:10px 12px;border:1px solid #e3e8f1;border-radius:10px;min-height:120px;">
                         @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}" @selected(old('course_category_id')==$cat->id)>{{ $cat->name }}</option>
+                            <option value="{{ $cat->id }}" @selected(in_array($cat->id, $selectedCategories))>{{ $cat->name }}</option>
                         @endforeach
                     </select>
+                    <div class="muted" style="font-size:13px;margin-top:6px;">Giữ Ctrl/Command để chọn nhiều danh mục.</div>
                 </div>
                 <div>
                     <label style="font-weight:700;">Giá *</label>
@@ -54,7 +55,7 @@
                            style="width:100%;margin-top:6px;padding:10px 12px;border:1px solid #e3e8f1;border-radius:10px;">
                 </div>
                 <div>
-                    <label style="font-weight:700;">Giá khuyến mãi</label>
+                    <label style="font-weight:700;">Giá khuyến mại</label>
                     <input type="number" step="0.01" min="0" name="sale_price" value="{{ old('sale_price') }}"
                            style="width:100%;margin-top:6px;padding:10px 12px;border:1px solid #e3e8f1;border-radius:10px;">
                 </div>
@@ -62,7 +63,7 @@
                     <label style="font-weight:700;">Trạng thái *</label>
                     <select name="status" required style="width:100%;margin-top:6px;padding:10px 12px;border:1px solid #e3e8f1;border-radius:10px;">
                         <option value="draft" @selected(old('status','draft')==='draft')>Nháp</option>
-                        <option value="published" @selected(old('status')==='published')>Xuất bản</option>
+                        <option value="published" @selected(old('status')==='published')>xuất bản</option>
                         <option value="archived" @selected(old('status')==='archived')>Lưu trữ</option>
                     </select>
                 </div>
@@ -80,7 +81,7 @@
                            style="width:100%;margin-top:6px;padding:10px 12px;border:1px solid #e3e8f1;border-radius:10px;">
                 </div>
                 <div>
-                    <label style="font-weight:700;">Ảnh thumbnail</label>
+                    <label style="font-weight:700;">ảnh thumbnail</label>
                     <input id="thumbInput" type="file" name="thumbnail_upload" accept="image/*" style="display:none;">
                     <label for="thumbInput" style="margin-top:6px;display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid #e3e8f1;border-radius:10px;background:#f8fafc;cursor:pointer;">
                         <i class="fa-solid fa-image"></i> <span id="thumbFileName">Chọn ảnh</span>
@@ -121,7 +122,7 @@
                 if (!file) {
                     preview.style.display = 'none';
                     preview.src = '';
-                    if (fileName) fileName.textContent = 'Chọn ảnh';
+                    if (fileName) fileName.textContent = 'Chá»n áº£nh';
                     return;
                 }
                 if (fileName) fileName.textContent = file.name;
