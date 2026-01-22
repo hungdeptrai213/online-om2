@@ -123,7 +123,7 @@
                                     </div>
                                     <i class="bi bi-chevron-down ms-2"></i>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end shadow-sm w-100" aria-labelledby="studentMenuMobile">
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm w-100" aria-labelledby="studentMenuMobile" style="min-width: 220px;">
                                     <li class="px-3 pt-3 pb-2">
                                         <div class="fw-bold"><?php echo e($student->name); ?></div>
                                         <div class="text-muted small"><?php echo e($student->email); ?></div>
@@ -172,7 +172,7 @@
                             <i class="bi bi-person-fill"></i>
                             <i class="bi bi-chevron-down ms-1"></i>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="studentMenuDesktop">
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="studentMenuDesktop" style="min-width: 220px;">
                             <li class="px-3 pt-3 pb-2">
                                 <div class="fw-bold"><?php echo e($student->name); ?></div>
                                 <div class="text-muted small"><?php echo e($student->email); ?></div>

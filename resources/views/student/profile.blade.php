@@ -21,10 +21,10 @@
         <div class="col-xl-7 col-lg-8">
             <div class="p-4 p-md-5 bg-white rounded-4 shadow-sm profile-card" style="box-shadow: 0 18px 50px rgba(0,0,0,0.08);">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <div class="rounded-circle overflow-hidden border" style="width:80px;height:80px;">
+                    {{-- <div class="rounded-circle overflow-hidden border" style="width:80px;height:80px;"> --}}
                         @php($avatarUrl = $student->avatar ? asset($student->avatar) : 'https://via.placeholder.com/150x150.png?text=Avatar')
-                        <img src="{{ $avatarUrl }}" alt="Avatar" class="w-100 h-100 object-fit-cover">
-                    </div>
+                        {{-- <img src="{{ $avatarUrl }}" alt="Avatar" class="w-100 h-100 object-fit-cover"> --}}
+                    {{-- </div> --}}
                     <div>
                         <h2 class="fw-bold mb-1">Hồ sơ học viên</h2>
                         <p class="mb-0 text-muted small">Cập nhật thông tin và ảnh đại diện của bạn</p>
@@ -44,7 +44,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('student.profile.update') }}" enctype="multipart/form-data" class="d-flex flex-column gap-3">
+                <form method="POST" action="{{ route('student.profile.update') }}" enctype="multipart/form-data" class="ho-so d-flex flex-column gap-3">
                     @csrf
                     <div class="row g-3">
                         <div class="col-12">
@@ -63,7 +63,7 @@
                         <div class="col-12">
                             <label class="form-label fw-semibold">Ảnh đại diện</label>
                             <div class="d-flex align-items-center gap-3">
-                                <div class="rounded-circle overflow-hidden border" style="width:64px;height:64px;">
+                                <div class="rounded-circle overflow-hidden border" style="width: 200px; height: 200px; border-radius:12px!important;">
                                     <img src="{{ $avatarUrl }}" alt="Avatar" class="w-100 h-100 object-fit-cover">
                                 </div>
                                 <input type="file" name="avatar" class="form-control" accept="image/*">

@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\CourseContentController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\StudentCourseController as AdminStudentCourseController;
 use App\Http\Controllers\Student\CheckoutController;
+use App\Http\Controllers\Student\CommentController;
 
 Route::get('/', [HomeController::class, 'index'])->name('student.home');
 Route::get('/coaching', [HomeController::class, 'coaching'])->name('student.coaching');
@@ -27,6 +28,8 @@ Route::middleware('auth:student')->group(function () {
     Route::get('/ho-so', [HomeController::class, 'profile'])->name('student.profile');
     Route::get('/khoa-hoc-cua-toi', [HomeController::class, 'myCourses'])->name('student.my-courses');
     Route::post('/ho-so', [HomeController::class, 'updateProfile'])->name('student.profile.update');
+    Route::get('/khoa-hoc/hoc/{course}/{lesson?}', [HomeController::class, 'learn'])->name('student.course.learn');
+    Route::post('/comments', [CommentController::class, 'store'])->name('student.comments.store');
 });
 
 Route::middleware('guest:student')->group(function () {

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\Comment;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Collection;
 
 class HomeController extends Controller
 {
@@ -246,6 +248,54 @@ class HomeController extends Controller
 
         return view('student.my-courses', [
             'courses' => $courses,
+        ]);
+    }
+
+    public function learn(Request $request, $courseId, $lessonId = null)
+    {
+        $course = Course::with(['chapters' => function ($q) {
+            $q->orderBy('position')->orderBy('id');
+        }, 'chapters.lessons' => function ($q) {
+            $q->orderBy('position')->orderBy('id');
+        }])->where('status', 'published')->findOrFail($courseId);
+
+        $student = auth('student')->user();
+        $hasAccess = $course->isFree();
+        if (!$hasAccess && $student) {
+            $hasAccess = Gate::forUser($student)->check('view', $course);
+        }
+        if (!$hasAccess) {
+            return redirect()->route('student.course-detail', ['course' => $course->id])
+                ->with('msg', 'Bạn cần mua khóa học để vào học.');
+        }
+
+        $lessons = $course->chapters->flatMap(fn ($chapter) => $chapter->lessons)->values();
+        if ($lessons->isEmpty()) {
+            abort(404);
+        }
+
+        $currentLesson = $lessonId
+            ? $lessons->firstWhere('id', (int) $lessonId) ?? $lessons->first()
+            : $lessons->first();
+
+        $currentIndex = $lessons->search(fn ($item) => $item->id === $currentLesson->id);
+        $prevLesson = $currentIndex > 0 ? $lessons->get($currentIndex - 1) : null;
+        $nextLesson = $currentIndex !== false && $currentIndex < $lessons->count() - 1 ? $lessons->get($currentIndex + 1) : null;
+
+        $comments = Comment::with(['student', 'repliesRecursive.student'])
+            ->where('course_id', $course->id)
+            ->where('lesson_id', $currentLesson->id)
+            ->whereNull('parent_id')
+            ->latest()
+            ->get();
+
+        return view('student.course-learn', [
+            'course' => $course,
+            'lessons' => $lessons,
+            'currentLesson' => $currentLesson,
+            'prevLesson' => $prevLesson,
+            'nextLesson' => $nextLesson,
+            'comments' => $comments,
         ]);
     }
 }

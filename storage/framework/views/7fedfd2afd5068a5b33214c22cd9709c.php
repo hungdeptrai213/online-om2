@@ -134,10 +134,10 @@
                             <p class="fs-3 fst-italic mb-lg-5"><?php echo e($displayPrice); ?></p>
 
                             <?php if($hasAccess): ?>
-                                <a class="btn btn-primary fs-3 rounded-4 fw-bold mt-auto mb-2" href="#" role="button">Vào học</a>
+                                <a class="btn btn-primary fs-3 rounded-4 fw-bold mt-auto mb-2" href="<?php echo e(route('student.course.learn', ['course' => $course->id])); ?>" role="button">Vào học</a>
                             <?php else: ?>
                                 <a class="btn btn-primary fs-3 rounded-4 fw-bold mt-auto mb-2" href="<?php echo e(route('student.cart', ['course' => $course->id])); ?>" role="button">Đăng ký</a>
-                                <a class="btn btn-primary fs-3 rounded-4 fw-bold mt-2 mb-2" href="#" role="button">Vào học</a>
+                                <a class="btn btn-primary fs-3 rounded-4 fw-bold mt-2 mb-2" href="<?php echo e(route('student.course.learn', ['course' => $course->id])); ?>" role="button">Vào học</a>
                             <?php endif; ?>
                         </div>
                     </div>

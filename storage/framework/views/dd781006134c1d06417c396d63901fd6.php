@@ -28,7 +28,7 @@
                                 <p class="card-text text-muted mb-1"><?php echo e($categoryNames); ?></p>
                             <?php endif; ?>
                             <p class="card-text text-muted mb-3"><?php echo e($displayPrice); ?></p>
-                            <a href="<?php echo e(route('student.course-detail', ['course' => $course->id])); ?>" class="btn btn-primary mt-auto rounded-4">Vào học</a>
+                            <a href="<?php echo e(route('student.course.learn', ['course' => $course->id])); ?>" class="btn btn-primary mt-auto rounded-4">Vào học</a>
                         </div>
                     </div>
                 </div>

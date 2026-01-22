@@ -1234,3 +1234,13 @@ a.btn.btn-primary.px-lg-2.fs-4.rounded-4.fw-bold.p-xl-4.p-lg-3 {
         height: 60px;
     }
 }
+
+
+form.ho-so.d-flex.flex-column.gap-3 input {
+    padding-left: 12px;
+}
+
+textarea#commentContent {
+    border: 1px solid #ccc;
+    padding: 15px;
+}

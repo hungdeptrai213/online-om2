@@ -15,14 +15,14 @@
         <div class="row gx-lg-4 gx-xl-5 justify-content-between thong-tin-khoa-hoc">
             <!-- Left -->
             <div class="col-lg-8 mb-5">
-                <p class="fs-1 mb-1 fw-bold text-sm-center text-md-left"># Thông tin gi? hàng</p>
+                <p class="fs-1 mb-1 fw-bold text-sm-center text-md-left"># Thông tin giỏ hàng</p>
                 <div class="table-responsive-md">
                     <table class="table mt-5 align-middle fs-2 fw-bold text-center cart-table">
                         <thead>
                             <tr>
                                 <th scope="col">STT</th>
-                                <th scope="col">Khóa h?c</th>
-                                <th scope="col" class="text-nowrap">Thành ti?n</th>
+                                <th scope="col">Khóa học</th>
+                                <th scope="col" class="text-nowrap">Thành tiền</th>
                                 <th scope="col"></th>
                             </tr>
                         </thead>
@@ -49,14 +49,14 @@
                                 </tr>
                             @else
                                 <tr id="emptyRow">
-                                    <td colspan="4" class="py-4 text-muted">Chưa có khóa h?c nào trong gi?.</td>
+                                    <td colspan="4" class="py-4 text-muted">Chưa có khóa học nào trong giỏ.</td>
                                 </tr>
                             @endif
                         </tbody>
                     </table>
                 </div>
                 @if($course)
-                    <p class="fw-bold fs-2 mt-3 text-sm-center text-md-end" id="cartTotal">T?ng: {{ $displayPrice }}</p>
+                    <p class="fw-bold fs-2 mt-3 text-sm-center text-md-end" id="cartTotal">Tổng: {{ $displayPrice }}</p>
                 @endif
 
             </div>
@@ -66,24 +66,24 @@
                 <p class="fs-1 mb-3 fw-bold text-center"># Thanh toán</p>
                 <div
                     class="custom-bg-5 p-sm-3 p-md-4  p-lg-4 py-lg-5 d-flex justify-content-center flex-column rounded-5 shadow">
-                    <p class="text-center fs-3 fw-bold">T?ng c?ng</p>
+                    <p class="text-center fs-3 fw-bold">Tổng cộng</p>
                     <p class="text-center fs-3 fw-bold mb-0" id="summaryTotal">{{ $course ? $displayPrice : '0 VNĐ' }}</p>
-                    <p class="text-center fs-4 fst-italic" id="summaryCount">({{ $course ? '1 khóa h?c' : 'Chưa có khóa h?c' }})</p>
+                    <p class="text-center fs-4 fst-italic" id="summaryCount">({{ $course ? '1 khóa học' : 'Chưa có khóa h?c' }})</p>
 
                     @if($course)
                         <button
                             onclick="checkPaid({{ $rawPrice }}, '{{ $transferNoteSafe }}', this, false)"
-                            class="btn btn-primary fs-3 rounded-4 fw-bold mt-auto mb-4 mx-auto d-sm-none d-md-block d-lg-none check-paid-btn">Xác nh?n đ? thanh toán</button>
+                            class="btn btn-primary fs-3 rounded-4 fw-bold mt-auto mb-4 mx-auto d-sm-none d-md-block d-lg-none check-paid-btn">Xác nhận đã thanh toán</button>
 
                         <button
                             onclick="checkPaid({{ $rawPrice }}, '{{ $transferNoteSafe }}', this, false)"
-                            class="btn btn-primary fs-3 rounded-4 fw-bold mt-auto mb-4 d-sm-block d-md-none d-lg-block check-paid-btn">Xác nh?n đ? thanh toán</button>
+                            class="btn btn-primary fs-3 rounded-4 fw-bold mt-auto mb-4 d-sm-block d-md-none d-lg-block check-paid-btn">Xác nhận đã thanh toán</button>
                     @endif
 
 
                     <p class="text-center fs-3 mb-0">Cách 1:</p>
                     @if($course)
-                        <p class="text-center fs-3">Thanh toán theo m? QR</p>
+                        <p class="text-center fs-3">Thanh toán theo mã QR</p>
                         <div class="d-flex justify-content-center mb-3">
                             <img class="w-50 mx-auto d-sm-block d-lg-none"
                                 src="https://img.vietqr.io/image/mb-163448866-compact2.jpg?amount={{ $rawPrice }}&addInfo={{ $transferNoteSafe }}" alt="">
@@ -91,17 +91,17 @@
                                 src="https://img.vietqr.io/image/mb-163448866-compact2.jpg?amount={{ $rawPrice }}&addInfo={{ $transferNoteSafe }}" alt="">
                         </div>
                     @else
-                        <p class="text-center fs-4 text-muted mb-3">Thêm khóa h?c đ? nh?n m? QR thanh toán.</p>
+                        <p class="text-center fs-4 text-muted mb-3">Thêm khóa học để nhận mã QR thanh toán.</p>
                     @endif
                     <hr class="opacity-100 w-25 ms-auto me-auto mt-4">
                     <p class="text-center fs-3 mb-0">Cách 2:</p>
-                    <p class="text-center fs-3 mb-0">Thanh toán chuy?n kho?n</p>
-                    <p class="text-center fs-5 mb-0 fw-bold">MB Bank - 163448866 - Ph?m Ng?c Hùng</p>
-                    <p class="text-center fs-4 mb-0">N?i dung chuy?n kho?n: {{ $transferNoteSafe }}</p>
-                    <p class="text-center fs-4 mb-0">Lưu ? ki?m tra đúng s? ti?n và n?i dung chuy?n kho?n.</p>
+                    <p class="text-center fs-3 mb-0">Thanh toán chuyển khoản</p>
+                    <p class="text-center fs-5 mb-0 fw-bold">MB Bank - 163448866 - Phạm Ngọc Hùng</p>
+                    <p class="text-center fs-4 mb-0">Nội dung chuyển khoản: {{ $transferNoteSafe }}</p>
+                    <p class="text-center fs-4 mb-0">Lưu ý kiểm tra đúng số tiền và nội dung chuyển khoản.</p>
                     <hr class="opacity-100 w-25 mx-auto mt-4">
-                    <p class="text-center fs-5 mb-0 fst-italic">N?u sau 15 phút b?n v?n chưa nh?n đư?c khóa h?c vui l?ng
-                        liên h? h? tr?</p>
+                    <p class="text-center fs-5 mb-0 fst-italic">Nếu sau 15 phút bạn vẫn chưa nhận được khóa học vui lòng
+                        liên hệ hỗ trợ</p>
                 </div>
             </div>
         </div>
