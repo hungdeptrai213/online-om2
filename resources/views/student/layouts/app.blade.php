@@ -6,7 +6,7 @@
     <link rel="icon" href="https://organicmarketing.vn/img/Logo%20Organic%20Marketing%20small%20(1).png"
         type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>OM Edu</title>
     <link rel="stylesheet" href="/om-front/css/owl.carousel.css" />
     <link rel="stylesheet" href="/om-front/css/owl.theme.default.css" />
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -34,6 +34,7 @@
 </head>
 
 <body class="overflow-x-hidden">
+    @php use Illuminate\Support\Str; @endphp
 
     <!-- NavBar -->
     <nav class="navbar navbar-expand-lg bg-body py-0 position-sticky top-0 z-3 px-0 e-learning-nav">
@@ -97,20 +98,100 @@
                             'active' => request()->routeIs('student.materials'),
                         ]) href="{{ route('student.materials') }}">Tài Liệu</a>
                     </li>
-                    <div class="d-sm-flex d-lg-none my-3">
+                    <div class="d-sm-flex d-lg-none my-3 align-items-center">
                         <a class="btn btn-primary me-2 p-xl-4 p-lg-3 fs-4 fw-bold rounded-4" href="#"
                             role="button">Dạy trên OM Edu</a>
-                        <a class="btn btn-primary p-xl-4 p-lg-3 fs-4 fw-bold rounded-4" href="/dang-nhap"
-                            role="button">Đăng nhập</a>
+                        @auth('student')
+                            @php($student = auth('student')->user())
+                            @php($avatarUrl = $student->avatar ? asset($student->avatar) : null)
+                            <div class="dropdown w-100">
+                                <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-4 border"
+                                        type="button"
+                                        id="studentMenuMobile"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="student-avatar text-white fw-bold" style="overflow:hidden;">
+                                            @if($avatarUrl)
+                                                <img src="{{ $avatarUrl }}" alt="{{ $student->name }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                                            @else
+                                                {{ Str::upper(Str::substr($student->name ?? 'U', 0, 1)) }}
+                                            @endif
+                                        </div>
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                    <i class="bi bi-chevron-down ms-2"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-sm w-100" aria-labelledby="studentMenuMobile">
+                                    <li class="px-3 pt-3 pb-2">
+                                        <div class="fw-bold">{{ $student->name }}</div>
+                                        <div class="text-muted small">{{ $student->email }}</div>
+                                    </li>
+                                    <li><hr class="dropdown-divider my-2"></li>
+                                    <li><a class="dropdown-item py-2" href="{{ route('student.profile') }}"><i class="bi bi-person me-2"></i>Hồ sơ</a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ route('student.my-courses') }}"><i class="bi bi-book me-2"></i>Khóa học của tôi</a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ route('student.cart') }}"><i class="bi bi-bag me-2"></i>Giỏ hàng</a></li>
+                                    <li><hr class="dropdown-divider my-2"></li>
+                                    <li>
+                                        <form action="{{ route('student.logout') }}" method="POST" class="m-0">
+                                            @csrf
+                                            <button class="dropdown-item text-danger py-2" type="submit"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+                        @else
+                            <a class="btn btn-primary p-xl-4 p-lg-3 fs-4 fw-bold rounded-4" href="/dang-nhap"
+                                role="button">Đăng nhập</a>
+                        @endauth
                     </div>
                 </ul>
-            </div>
+            </div> 
 
-            <div class="d-flex two-button">
-                <a class="btn btn-primary me-2 p-lg-3 p-xl-4 px-lg-2 px-xl-3 fs-4 rounded-4 fw-bold" href="#"
+            <div class="d-flex two-button align-items-center">
+                <a class="btn btn-primary me-2 px-4 fs-5 rounded-4 fw-bold" style="height:60px; display:flex; align-items:center; border-radius:12px;" href="#"
                     role="button">Dạy trên OM Edu</a>
-                <a class="btn btn-primary p-lg-3 p-xl-4 px-lg-2 px-xl-3 fs-4 rounded-4 fw-bold" href="/dang-nhap"
-                    role="button">Đăng nhập</a>
+                @auth('student')
+                    @php($student = auth('student')->user())
+                    @php($avatarUrl = $student->avatar ? asset($student->avatar) : null)
+                    <div class="dropdown d-none d-lg-flex align-items-center">
+                        <button class="btn btn-light d-flex align-items-center gap-2 px-3 py-2 rounded-4 border"
+                                type="button"
+                                id="studentMenuDesktop"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            <div class="student-avatar text-white fw-bold" style="overflow:hidden;">
+                                @if($avatarUrl)
+                                    <img src="{{ $avatarUrl }}" alt="{{ $student->name }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                                @else
+                                    {{ Str::upper(Str::substr($student->name ?? 'U', 0, 1)) }}
+                                @endif
+                            </div>
+                            <i class="bi bi-person-fill"></i>
+                            <i class="bi bi-chevron-down ms-1"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="studentMenuDesktop">
+                            <li class="px-3 pt-3 pb-2">
+                                <div class="fw-bold">{{ $student->name }}</div>
+                                <div class="text-muted small">{{ $student->email }}</div>
+                            </li>
+                            <li><hr class="dropdown-divider my-2"></li>
+                            <li><a class="dropdown-item py-2" href="{{ route('student.profile') }}"><i class="bi bi-person me-2"></i>Hồ sơ</a></li>
+                            <li><a class="dropdown-item py-2" href="{{ route('student.my-courses') }}"><i class="bi bi-book me-2"></i>Khóa học của tôi</a></li>
+                            <li><a class="dropdown-item py-2" href="{{ route('student.cart') }}"><i class="bi bi-bag me-2"></i>Giỏ hàng</a></li>
+                            <li><hr class="dropdown-divider my-2"></li>
+                            <li>
+                                <form action="{{ route('student.logout') }}" method="POST" class="m-0">
+                                    @csrf
+                                    <button class="dropdown-item text-danger py-2" type="submit"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                @else
+                            <a class="btn btn-primary px-4 fs-5 rounded-4 fw-bold" style="height:60px; display:flex; align-items:center; border-radius:12px;" href="/dang-nhap"
+                                role="button">Đăng nhập</a>
+                @endauth
             </div>
 
         </div>
@@ -121,55 +202,47 @@
     @yield('content')
 
 
-        <!-- Footer -->
-   <div class="container">
-    <footer class="mt-6 pt-5 border-top border-2 border-custom ">
-        <div class="container width-60">
-            <div class="d-flex justify-content-center">
-                <img class="rounded-circle mx-2" src="{{ asset('img/call.png') }}" alt="" width="80"
-                    height="80">
-                <img class="rounded-circle mx-2" src="{{ asset('img/fb.png') }}" alt="" width="80"
-                    height="80">
-                <img class="rounded-circle mx-2" src="{{ asset('img/tiktok.png') }}" alt="" width="80"
-                    height="80">
-                <img class="rounded-circle mx-2" src="{{ asset('img/youtube.png') }}" alt="" width="80"
-                    height="80">
+    <!-- Footer -->
+    <div class="container">
+        <footer class="mt-6 pt-5 border-top border-2 border-custom ">
+            <div class="container width-60">
+                <div class="d-flex justify-content-center">
+                    <img class="rounded-circle mx-2" src="{{ asset('img/call.png') }}" alt=""
+                        width="80" height="80">
+                    <img class="rounded-circle mx-2" src="{{ asset('img/fb.png') }}" alt="" width="80"
+                        height="80">
+                    <img class="rounded-circle mx-2" src="{{ asset('img/tiktok.png') }}" alt=""
+                        width="80" height="80">
+                    <img class="rounded-circle mx-2" src="{{ asset('img/youtube.png') }}" alt=""
+                        width="80" height="80">
+                </div>
+                <p class="text-center mt-5 fs-2">Trang bị những hành trang tuyệt vời từ Organic Marketing.
+                    Được khai sáng, bước đến 1 vùng đất đầy tri thức và
+                    đưa thương hiệu của bạn đến nơi xứng đáng thuộc về.</p>
+                <p class="text-center mt-4 fs-4">Nocopyright | @OrganicMarketing | MST: 0110715667</p>
             </div>
-            <p class="text-center mt-5 fs-2">Trang bị những hành trang tuyệt vời từ Organic Marketing.
-                Được khai sáng, bước đến 1 vùng đất đầy tri thức và
-                đưa thương hiệu của bạn đến nơi xứng đáng thuộc về.</p>
-            <p class="text-center mt-4 fs-4">Nocopyright | @OrganicMarketing | MST: 0110715667</p>
-        </div>
-    </footer>
-</div>
+        </footer>
+    </div>
 
 
-        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
 
-        <script src="/om-front/js/owl.carousel.js"></script>
+    <script src="/om-front/js/owl.carousel.js"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-        </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
+    </script>
 
-        <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
 
-        <script src="/om-front/js/Js-custom.js"></script>
+    <script src="/om-front/js/Js-custom.js"></script>
+
+    @stack('scripts')
 
 
 
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
 

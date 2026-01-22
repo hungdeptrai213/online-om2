@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
@@ -59,14 +61,23 @@ class HomeController extends Controller
         $newCourses = collect();
 
         if ($isHome && $q === '') {
-            $libraryCourses = Course::with('categories')
-                ->where('status', 'published')
-                ->whereHas('categories', function ($qCat) {
-                    $qCat->where('name', 'Thư viện');
-                })
-                ->latest('published_at')
-                ->take(5)
-                ->get();
+            $student = auth('student')->user();
+            if ($student) {
+                $libraryCourses = $student->courses()
+                    ->with('categories')
+                    ->where('status', 'published')
+                    ->latest('published_at')
+                    ->get();
+            } else {
+                $libraryCourses = Course::with('categories')
+                    ->where('status', 'published')
+                    ->whereHas('categories', function ($qCat) {
+                        $qCat->where('name', 'Thư viện');
+                    })
+                    ->latest('published_at')
+                    ->take(5)
+                    ->get();
+            }
 
             $recommendedCourses = Course::with('categories')
                 ->where('status', 'published')
@@ -130,13 +141,111 @@ class HomeController extends Controller
         return view('student.enterprise');
     }
 
-    public function courseDetail()
+    public function courseDetail(Request $request, $courseId = null)
     {
-        return view('student.course-detail');
+        $courseId = $courseId ?? $request->get('course');
+        if (!$courseId || !is_numeric($courseId)) {
+            abort(404);
+        }
+
+        $course = Course::with([
+            'categories',
+            'chapters' => function ($query) {
+                $query->orderBy('position')->orderBy('id');
+            },
+            'chapters.lessons' => function ($query) {
+                $query->orderBy('position')->orderBy('id');
+            },
+        ])
+            ->where('status', 'published')
+            ->findOrFail($courseId);
+
+        $totalDurationSeconds = $course->chapters
+            ->flatMap(fn ($chapter) => $chapter->lessons)
+            ->sum('duration_seconds');
+
+        $student = auth('student')->user();
+        $hasAccess = $course->isFree();
+
+        if (!$hasAccess && $student) {
+            $hasAccess = Gate::forUser($student)->check('view', $course);
+        }
+
+        return view('student.course-detail', [
+            'course' => $course,
+            'totalDurationSeconds' => (int) $totalDurationSeconds,
+            'hasAccess' => $hasAccess,
+        ]);
     }
 
-    public function cart()
+    public function cart(Request $request)
     {
-        return view('student.cart');
+        $courseId = $request->get('course');
+        $course = $courseId ? Course::where('status', 'published')->find($courseId) : null;
+        $student = auth('student')->user();
+        $transferNote = $student && $course ? 'mh' . $student->id . $course->id : null;
+
+        return view('student.cart', [
+            'course' => $course,
+            'transferNote' => $transferNote,
+        ]);
+    }
+
+    public function profile()
+    {
+        $student = auth('student')->user();
+        if (!$student) {
+            return redirect()->route('student.login');
+        }
+
+        return view('student.profile', [
+            'student' => $student,
+        ]);
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $student = auth('student')->user();
+        if (!$student) {
+            return redirect()->route('student.login');
+        }
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:50'],
+            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
+            'avatar' => ['nullable', 'image', 'max:2048'],
+        ]);
+
+        $student->name = $data['name'];
+        $student->phone = $data['phone'] ?? null;
+        if (!empty($data['password'])) {
+            $student->password = bcrypt($data['password']);
+        }
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $student->avatar = 'storage/' . $path;
+        }
+        $student->save();
+
+        return back()->with('status', 'Cập nhật hồ sơ thành công.');
+    }
+
+    public function myCourses()
+    {
+        $student = auth('student')->user();
+        if (!$student) {
+            return redirect()->route('student.login');
+        }
+
+        $courses = $student->courses()
+            ->with('categories')
+            ->where('status', 'published')
+            ->orderByDesc('published_at')
+            ->get();
+
+        return view('student.my-courses', [
+            'courses' => $courses,
+        ]);
     }
 }

@@ -1,5 +1,3 @@
-﻿
-
 <?php $__env->startSection('content'); ?>
     <!-- Bộ lọc / tìm kiếm -->
     <div class="container mt-6">
@@ -56,7 +54,7 @@
                     $short = $course->short_description ?? '';
                 ?>
                 <div class="col-sm-6 col-md-4 col-lg-24 mb-3">
-                    <a href="<?php echo e(route('student.course-detail')); ?>" class="text-decoration-none text-black position-relative has-tooltip">
+                    <a href="<?php echo e(route('student.course-detail', ['course' => $course->id])); ?>" class="text-decoration-none text-black position-relative has-tooltip">
                         <img src="<?php echo e($thumbUrl); ?>" alt="<?php echo e($course->title); ?>" class="w-100 rounded-sm-3 rounded-5 shadow-sm">
                         <p class="fs-2 mt-3"><?php echo e($displayPrice); ?></p>
                         <div class="grey-bg rounded-5 p-4 d-flex my-tooltip shadow-sm" style="width: 35%;">
@@ -101,7 +99,7 @@
                         $short = $course->short_description ?? '';
                     ?>
                     <div class="col-sm-6 col-md-4 col-lg-24 mb-3">
-                        <a href="<?php echo e(route('student.course-detail')); ?>" class="text-decoration-none text-black position-relative has-tooltip">
+                        <a href="<?php echo e(route('student.course-detail', ['course' => $course->id])); ?>" class="text-decoration-none text-black position-relative has-tooltip">
                             <img src="<?php echo e($thumbUrl); ?>" alt="<?php echo e($course->title); ?>" class="w-100 rounded-sm-3 rounded-5 shadow-sm">
                             <p class="fs-2 mt-3"><?php echo e($displayPrice); ?></p>
                             <div class="grey-bg rounded-5 p-4 d-flex my-tooltip shadow-sm" style="width: 35%;">
@@ -144,7 +142,7 @@
                         $short = $course->short_description ?? '';
                     ?>
                     <div class="col-sm-6 col-md-4 col-lg-24 mb-3">
-                        <a href="<?php echo e(route('student.course-detail')); ?>" class="text-decoration-none text-black position-relative has-tooltip">
+                        <a href="<?php echo e(route('student.course-detail', ['course' => $course->id])); ?>" class="text-decoration-none text-black position-relative has-tooltip">
                             <img src="<?php echo e($thumbUrl); ?>" alt="<?php echo e($course->title); ?>" class="w-100 rounded-sm-3 rounded-5 shadow-sm">
                             <p class="fs-2 mt-3"><?php echo e($displayPrice); ?></p>
                             <div class="grey-bg rounded-5 p-4 d-flex my-tooltip shadow-sm" style="width: 35%;">
@@ -186,7 +184,7 @@
                         $short = $course->short_description ?? '';
                     ?>
                     <div class="col-sm-6 col-md-4 col-lg-24 mb-3">
-                        <a href="<?php echo e(route('student.course-detail')); ?>" class="text-decoration-none text-black position-relative has-tooltip">
+                        <a href="<?php echo e(route('student.course-detail', ['course' => $course->id])); ?>" class="text-decoration-none text-black position-relative has-tooltip">
                             <img src="<?php echo e($thumbUrl); ?>" alt="<?php echo e($course->title); ?>" class="w-100 rounded-sm-3 rounded-5 shadow-sm">
                             <p class="fs-2 mt-3"><?php echo e($displayPrice); ?></p>
                             <div class="grey-bg rounded-5 p-4 d-flex my-tooltip shadow-sm" style="width: 35%;">
@@ -228,7 +226,7 @@
                         $short = $course->short_description ?? '';
                     ?>
                     <div class="col-sm-6 col-md-4 col-lg-24 mb-3">
-                        <a href="<?php echo e(route('student.course-detail')); ?>" class="text-decoration-none text-black position-relative has-tooltip">
+                        <a href="<?php echo e(route('student.course-detail', ['course' => $course->id])); ?>" class="text-decoration-none text-black position-relative has-tooltip">
                             <img src="<?php echo e($thumbUrl); ?>" alt="<?php echo e($course->title); ?>" class="w-100 rounded-sm-3 rounded-5 shadow-sm">
                             <p class="fs-2 mt-3"><?php echo e($displayPrice); ?></p>
                             <div class="grey-bg rounded-5 p-4 d-flex my-tooltip shadow-sm" style="width: 35%;">

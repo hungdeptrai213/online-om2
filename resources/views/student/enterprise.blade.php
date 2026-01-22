@@ -1,4 +1,4 @@
-﻿@extends('student.layouts.app')
+@extends('student.layouts.app')
 
 @section('style')
     <link rel="stylesheet" href="/om-front/css/custom-option.css">

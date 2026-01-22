@@ -58,7 +58,14 @@
                             @endif
                         </td>
                         <td style="padding:12px;border-bottom:1px solid #f1f2f6;">{{ $student->created_at?->format('d/m/Y') }}</td>
-                        <td style="padding:12px;border-bottom:1px solid #f1f2f6;display:flex;gap:8px;flex-wrap:wrap;">
+                        <td style="padding:12px;border-bottom:1px solid #f1f2f6;display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                            <button type="button"
+                                    class="btn-assign"
+                                    data-student="{{ $student->id }}"
+                                    data-name="{{ $student->name }}"
+                                    style="padding:8px 10px;border-radius:8px;border:1px solid #d4e3ff;background:#eff5ff;color:#0c3b2e;cursor:pointer;">
+                                Phân quyền
+                            </button>
                             <a href="{{ route('admin.students.edit', $student) }}" style="padding:8px 10px;border-radius:8px;border:1px solid #e6ecf5;text-decoration:none;">Sửa</a>
                             <form action="{{ route('admin.students.destroy', $student) }}" method="post" onsubmit="return confirm('Xóa tài khoản này?');">
                                 @csrf
@@ -80,4 +87,148 @@
             {{ $students->links() }}
         </div>
     </div>
+
+    <div class="modal fade" id="assignModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border:0;border-radius:16px;">
+                <div class="modal-header" style="border-bottom:1px solid #f1f2f6;">
+                    <h5 class="modal-title">Phân quyền khóa học</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="assignStatus" class="alert d-none" role="alert"></div>
+                    <div class="mb-3">
+                        <strong>Học viên:</strong> <span id="assignStudentName"></span>
+                    </div>
+                    <div style="max-height:360px;overflow:auto;border:1px solid #e6ecf5;border-radius:10px;padding:12px;">
+                        <form id="assignForm" class="d-flex flex-column gap-2">
+                            @csrf
+                            <div id="assignCourses" class="d-flex flex-column gap-2">
+                                <div class="text-muted small">Đang tải danh sách khóa học...</div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top:1px solid #f1f2f6;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-primary" id="assignSave">Lưu phân quyền</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const modalElement = document.getElementById('assignModal');
+    const modal = modalElement && window.bootstrap ? new bootstrap.Modal(modalElement) : null;
+    const assignCourses = document.getElementById('assignCourses');
+    const assignStudentName = document.getElementById('assignStudentName');
+    const assignStatus = document.getElementById('assignStatus');
+    const assignSave = document.getElementById('assignSave');
+    let currentStudentId = null;
+
+        const fetchCourses = async (studentId) => {
+            if (!assignCourses) return;
+            assignCourses.innerHTML = '<div class="text-muted small">Đang tải danh sách khóa học...</div>';
+            const res = await fetch(`{{ url('/admin/students') }}/${studentId}/courses-json`);
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                assignCourses.innerHTML = '<div class="text-danger small">Không tải được danh sách khóa học.</div>';
+                return;
+            }
+            const { courses = [], owned = [] } = data;
+            if (!courses.length) {
+                assignCourses.innerHTML = '<div class="text-muted small">Chưa có khóa học nào.</div>';
+                return;
+            }
+            const ownedSet = new Set(owned);
+            assignCourses.innerHTML = '';
+            courses.forEach((course) => {
+                const id = course.id;
+                const label = document.createElement('label');
+                label.style.display = 'flex';
+                label.style.alignItems = 'center';
+                label.style.gap = '8px';
+                label.style.padding = '6px 8px';
+                label.style.borderRadius = '8px';
+                label.style.border = '1px solid #e6ecf5';
+                label.style.cursor = 'pointer';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.name = 'courses[]';
+                checkbox.value = id;
+                checkbox.checked = ownedSet.has(id);
+
+                const title = document.createElement('div');
+                title.innerHTML = `<strong>${course.title}</strong><div class="text-muted small">${course.price_text || ''}</div>`;
+
+                label.appendChild(checkbox);
+                label.appendChild(title);
+                assignCourses.appendChild(label);
+            });
+        };
+
+    const setStatus = (msg, success = true) => {
+        if (!assignStatus) return;
+        assignStatus.classList.remove('d-none', 'alert-success', 'alert-danger');
+        assignStatus.classList.add(success ? 'alert-success' : 'alert-danger');
+        assignStatus.textContent = msg;
+    };
+
+    document.querySelectorAll('.btn-assign').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            currentStudentId = btn.getAttribute('data-student');
+            assignStudentName.textContent = btn.getAttribute('data-name') || '';
+            if (assignStatus) {
+                assignStatus.classList.add('d-none');
+                assignStatus.textContent = '';
+            }
+            fetchCourses(currentStudentId);
+            if (modal) {
+                modal.show();
+            } else {
+                console.error('Bootstrap modal not available.');
+            }
+        });
+    });
+
+    if (assignSave) {
+        assignSave.addEventListener('click', async () => {
+            if (!currentStudentId || !assignCourses) return;
+            const selected = Array.from(assignCourses.querySelectorAll('input[type=\"checkbox\"]'))
+                .filter((cb) => cb.checked)
+                .map((cb) => cb.value);
+            assignSave.disabled = true;
+            assignSave.textContent = 'Đang lưu...';
+            setStatus('', true);
+            assignStatus.classList.add('d-none');
+            try {
+                const res = await fetch(`{{ url('/admin/students') }}/${currentStudentId}/courses-sync`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({ course_ids: selected }),
+                });
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    throw new Error(data.message || 'Lưu phân quyền thất bại.');
+                }
+                setStatus('Đã lưu phân quyền khóa học.', true);
+            } catch (err) {
+                setStatus(err.message || 'Lưu phân quyền thất bại.', false);
+            } finally {
+                assignSave.disabled = false;
+                assignSave.textContent = 'Lưu phân quyền';
+            }
+        });
+    }
+});
+</script>
+@endpush

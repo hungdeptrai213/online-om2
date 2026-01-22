@@ -6,7 +6,7 @@
     <link rel="icon" href="https://organicmarketing.vn/img/Logo%20Organic%20Marketing%20small%20(1).png"
         type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>OM Edu</title>
     <link rel="stylesheet" href="/om-front/css/owl.carousel.css" />
     <link rel="stylesheet" href="/om-front/css/owl.theme.default.css" />
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -34,6 +34,7 @@
 </head>
 
 <body class="overflow-x-hidden">
+    <?php use Illuminate\Support\Str; ?>
 
     <!-- NavBar -->
     <nav class="navbar navbar-expand-lg bg-body py-0 position-sticky top-0 z-3 px-0 e-learning-nav">
@@ -97,11 +98,42 @@
                             'active' => request()->routeIs('student.materials'),
                         ]); ?>" href="<?php echo e(route('student.materials')); ?>">Tài Liệu</a>
                     </li>
-                    <div class="d-sm-flex d-lg-none my-3">
+                    <div class="d-sm-flex d-lg-none my-3 align-items-center">
                         <a class="btn btn-primary me-2 p-xl-4 p-lg-3 fs-4 fw-bold rounded-4" href="#"
                             role="button">Dạy trên OM Edu</a>
-                        <a class="btn btn-primary p-xl-4 p-lg-3 fs-4 fw-bold rounded-4" href="/dang-nhap"
-                            role="button">Đăng nhập</a>
+                        <?php if(auth()->guard('student')->check()): ?>
+                            <?php ($student = auth('student')->user()); ?>
+                            <div
+                                class="student-account d-flex align-items-center gap-2 px-3 py-2 rounded-4 w-100 justify-content-between">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="student-avatar text-white fw-bold">
+                                        <?php echo e(Str::upper(Str::substr($student->name ?? 'U', 0, 1))); ?>
+
+                                    </div>
+                                    <div class="student-name fw-bold text-nowrap"><?php echo e($student->name); ?></div>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-link text-dark p-0 dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false" aria-label="Tùy chọn tài khoản">
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li class="dropdown-item-text small"><?php echo e($student->email); ?></li>
+                                        <li>
+                                            <hr class="dropdown-divider">
+                                        </li>
+                                        <li>
+                                            <form action="<?php echo e(route('student.logout')); ?>" method="POST">
+                                                <?php echo csrf_field(); ?>
+                                                <button class="dropdown-item" type="submit">Đăng xuất</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <a class="btn btn-primary p-xl-4 p-lg-3 fs-4 fw-bold rounded-4" href="/dang-nhap"
+                                role="button">Đăng nhập</a>
+                        <?php endif; ?>
                     </div>
                 </ul>
             </div>
@@ -109,8 +141,39 @@
             <div class="d-flex two-button">
                 <a class="btn btn-primary me-2 p-lg-3 p-xl-4 px-lg-2 px-xl-3 fs-4 rounded-4 fw-bold" href="#"
                     role="button">Dạy trên OM Edu</a>
-                <a class="btn btn-primary p-lg-3 p-xl-4 px-lg-2 px-xl-3 fs-4 rounded-4 fw-bold" href="/dang-nhap"
-                    role="button">Đăng nhập</a>
+                <?php if(auth()->guard('student')->check()): ?>
+                    <?php ($student = auth('student')->user()); ?>
+                    <div class="student-account d-none d-lg-flex align-items-center gap-3 px-3 py-2 rounded-4">
+                        <div class="student-avatar text-white fw-bold">
+                            <?php echo e(Str::upper(Str::substr($student->name ?? 'U', 0, 1))); ?>
+
+                        </div>
+                        <div class="d-flex flex-column">
+                            <span class="student-name fw-bold"><?php echo e($student->name); ?></span>
+                            <span class="text-muted small"><?php echo e($student->email); ?></span>
+                        </div>
+                        <div class="dropdown ms-2">
+                            <button class="btn btn-link text-dark p-0 dropdown-toggle" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false" aria-label="Tùy chọn tài khoản">
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li class="dropdown-item-text small"><?php echo e($student->email); ?></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <form action="<?php echo e(route('student.logout')); ?>" method="POST">
+                                        <?php echo csrf_field(); ?>
+                                        <button class="dropdown-item" type="submit">Đăng xuất</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <a class="btn btn-primary p-lg-3 p-xl-4 px-lg-2 px-xl-3 fs-4 rounded-4 fw-bold" href="/dang-nhap"
+                        role="button">Đăng nhập</a>
+                <?php endif; ?>
             </div>
 
         </div>
@@ -121,56 +184,48 @@
     <?php echo $__env->yieldContent('content'); ?>
 
 
-        <!-- Footer -->
-   <div class="container">
-    <footer class="mt-6 pt-5 border-top border-2 border-custom ">
-        <div class="container width-60">
-            <div class="d-flex justify-content-center">
-                <img class="rounded-circle mx-2" src="<?php echo e(asset('img/call.png')); ?>" alt="" width="80"
-                    height="80">
-                <img class="rounded-circle mx-2" src="<?php echo e(asset('img/fb.png')); ?>" alt="" width="80"
-                    height="80">
-                <img class="rounded-circle mx-2" src="<?php echo e(asset('img/tiktok.png')); ?>" alt="" width="80"
-                    height="80">
-                <img class="rounded-circle mx-2" src="<?php echo e(asset('img/youtube.png')); ?>" alt="" width="80"
-                    height="80">
+    <!-- Footer -->
+    <div class="container">
+        <footer class="mt-6 pt-5 border-top border-2 border-custom ">
+            <div class="container width-60">
+                <div class="d-flex justify-content-center">
+                    <img class="rounded-circle mx-2" src="<?php echo e(asset('img/call.png')); ?>" alt=""
+                        width="80" height="80">
+                    <img class="rounded-circle mx-2" src="<?php echo e(asset('img/fb.png')); ?>" alt="" width="80"
+                        height="80">
+                    <img class="rounded-circle mx-2" src="<?php echo e(asset('img/tiktok.png')); ?>" alt=""
+                        width="80" height="80">
+                    <img class="rounded-circle mx-2" src="<?php echo e(asset('img/youtube.png')); ?>" alt=""
+                        width="80" height="80">
+                </div>
+                <p class="text-center mt-5 fs-2">Trang bị những hành trang tuyệt vời từ Organic Marketing.
+                    Được khai sáng, bước đến 1 vùng đất đầy tri thức và
+                    đưa thương hiệu của bạn đến nơi xứng đáng thuộc về.</p>
+                <p class="text-center mt-4 fs-4">Nocopyright | @OrganicMarketing | MST: 0110715667</p>
             </div>
-            <p class="text-center mt-5 fs-2">Trang bị những hành trang tuyệt vời từ Organic Marketing.
-                Được khai sáng, bước đến 1 vùng đất đầy tri thức và
-                đưa thương hiệu của bạn đến nơi xứng đáng thuộc về.</p>
-            <p class="text-center mt-4 fs-4">Nocopyright | @OrganicMarketing | MST: 0110715667</p>
-        </div>
-    </footer>
-</div>
+        </footer>
+    </div>
 
 
-        <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
-            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+        crossorigin="anonymous"></script>
 
-        <script src="/om-front/js/owl.carousel.js"></script>
+    <script src="/om-front/js/owl.carousel.js"></script>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-        </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
+    </script>
 
-        <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
 
-        <script src="/om-front/js/Js-custom.js"></script>
+    <script src="/om-front/js/Js-custom.js"></script>
+
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 
 
 
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
 
 <?php /**PATH C:\xampp\htdocs\online-om\resources\views/student/layouts/app.blade.php ENDPATH**/ ?>

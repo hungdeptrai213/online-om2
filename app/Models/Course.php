@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Course extends Model
 {
@@ -50,5 +51,19 @@ class Course extends Model
     public function lessons()
     {
         return $this->hasManyThrough(Lesson::class, CourseChapter::class, 'course_id', 'course_chapter_id');
+    }
+
+    public function students(): BelongsToMany
+    {
+        return $this->belongsToMany(Student::class)
+            ->withTimestamps()
+            ->withPivot(['purchased_at', 'expires_at', 'source']);
+    }
+
+    public function isFree(): bool
+    {
+        $price = $this->sale_price ?? $this->price ?? 0;
+
+        return (float) $price <= 0;
     }
 }

@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\CourseCategoryController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\CourseContentController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\StudentCourseController as AdminStudentCourseController;
+use App\Http\Controllers\Student\CheckoutController;
 
 Route::get('/', [HomeController::class, 'index'])->name('student.home');
 Route::get('/coaching', [HomeController::class, 'coaching'])->name('student.coaching');
@@ -20,9 +22,22 @@ Route::get('/goi-doanh-nghiep', [HomeController::class, 'enterprise'])->name('st
 Route::get('/khoa-hoc/chi-tiet', [HomeController::class, 'courseDetail'])->name('student.course-detail');
 Route::get('/gio-hang', [HomeController::class, 'cart'])->name('student.cart');
 
+Route::middleware('auth:student')->group(function () {
+    Route::post('/gio-hang/xac-nhan', [CheckoutController::class, 'confirm'])->name('student.cart.confirm');
+    Route::get('/ho-so', [HomeController::class, 'profile'])->name('student.profile');
+    Route::get('/khoa-hoc-cua-toi', [HomeController::class, 'myCourses'])->name('student.my-courses');
+    Route::post('/ho-so', [HomeController::class, 'updateProfile'])->name('student.profile.update');
+});
+
 Route::middleware('guest:student')->group(function () {
     Route::get('/dang-nhap', [StudentAuthController::class, 'showLoginForm'])->name('student.login');
     Route::post('/dang-nhap', [StudentAuthController::class, 'login'])->name('student.login.submit');
+    Route::get('/dang-ky', [StudentAuthController::class, 'showRegisterForm'])->name('student.register');
+    Route::post('/dang-ky', [StudentAuthController::class, 'register'])->name('student.register.submit');
+    Route::get('/quen-mat-khau', [StudentAuthController::class, 'showPasswordRequestForm'])->name('student.password.request');
+    Route::post('/quen-mat-khau', [StudentAuthController::class, 'sendResetLinkEmail'])->name('student.password.email');
+    Route::get('/dat-lai-mat-khau/{token}', [StudentAuthController::class, 'showResetForm'])->name('student.password.reset');
+    Route::post('/dat-lai-mat-khau', [StudentAuthController::class, 'reset'])->name('student.password.update');
 });
 
 Route::post('/dang-xuat', [StudentAuthController::class, 'logout'])
@@ -51,5 +66,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('courses/{course}/chapters/{chapter}', [CourseContentController::class, 'destroyChapter'])->name('courses.chapters.destroy');
         Route::put('courses/{course}/chapters/{chapter}/lessons/{lesson}', [CourseContentController::class, 'updateLesson'])->name('courses.lessons.update');
         Route::delete('courses/{course}/chapters/{chapter}/lessons/{lesson}', [CourseContentController::class, 'destroyLesson'])->name('courses.lessons.destroy');
+        Route::post('students/{student}/courses/{course}', [AdminStudentCourseController::class, 'store'])->name('students.courses.store');
+        Route::delete('students/{student}/courses/{course}', [AdminStudentCourseController::class, 'destroy'])->name('students.courses.destroy');
+        Route::get('students/{student}/courses-json', [AdminStudentCourseController::class, 'list'])->name('students.courses.list');
+        Route::post('students/{student}/courses-sync', [AdminStudentCourseController::class, 'sync'])->name('students.courses.sync');
     });
 });
