@@ -1,3 +1,5 @@
+﻿
+
 <?php $__env->startSection('style'); ?>
     <link rel="stylesheet" href="/om-front/css/custom-option.css">
 <?php $__env->stopSection(); ?>
@@ -9,14 +11,14 @@
             ? $thumb
             : ($thumb ? asset($thumb) : '/om-front/img/khoa-hoc-marketing-tong-quan-min.jpg');
         $price = $course->sale_price ?? $course->price ?? 0;
-        $displayPrice = $price > 0 ? number_format($price, 0, ',', '.') : 'Miễn phí';
+        $displayPrice = $price > 0 ? number_format($price, 0, ',', '.') : 'Miễn phí­';
         $categoryNames = optional($course->categories)->pluck('name')->filter()->implode(', ');
         $lessons = $course->chapters->flatMap->lessons;
         $lessonCount = $lessons->count();
         $hours = intdiv($totalDurationSeconds, 3600);
         $minutes = intdiv($totalDurationSeconds % 3600, 60);
         $durationText = $totalDurationSeconds > 0
-            ? trim(($hours ? $hours . ' giờ ' : '') . ($minutes ? $minutes . ' phút' : ''))
+            ? trim(($hours ? $hours . ' giá» ' : '') . ($minutes ? $minutes . ' phút' : ''))
             : null;
     ?>
 
@@ -24,7 +26,7 @@
         <div class="row gx-lg-4 gx-xl-5 justify-content-between thong-tin-khoa-hoc">
             <!-- Left -->
             <div class="col-lg-9 mb-5">
-                <p class="fs-1 fw-bold mb-1"><?php echo e($course->title); ?></p>
+                  <p class="fs-1 fw-bold mb-1"><?php echo e($course->title); ?></p>
                 <?php if($categoryNames): ?>
                     <p class="fs-4 fst-italic mb-1">Thể loại: <?php echo e($categoryNames); ?></p>
                 <?php endif; ?>
@@ -57,8 +59,8 @@
                             $seconds = max(0, (int) $lesson->duration_seconds);
                             $format = $seconds >= 3600 ? 'H:i:s' : 'i:s';
                             $lessonDuration = $seconds ? gmdate($format, $seconds) : null;
-                            $cleanTitle = preg_replace('/^Bài\s*\d+\s*[:.\-]?\s*/iu', '', $lesson->title ?? '');
-                            $lessonLabel = 'Bài ' . $lessonIndex . ': ' . ($cleanTitle ?: $lesson->title);
+                            $cleanTitle = preg_replace('/^BĂ i\s*\d+\s*[:.\-]?\s*/iu', '', $lesson->title ?? '');
+                            $lessonLabel = 'BĂ i ' . $lessonIndex . ': ' . ($cleanTitle ?: $lesson->title);
                         ?>
                         <div class="d-flex flex-wrap justify-content-end align-items-center mb-sm-3 mb-md-1 nd-chuong lesson-item" data-lesson="<?php echo e($lessonIndex); ?>">
                             <div class="col-md-8 col-lg-9 col-xxl-10">
@@ -95,6 +97,7 @@
                     </button>
                 </div>
 
+                
                 <p class="fs-1 fw-bold mb-1 mt-5">Ai nên học?</p>
                 <ul class="fs-3">
                     <li>Học viên muốn nắm vững Content Marketing từ cơ bản đến ứng dụng.</li>
@@ -102,7 +105,8 @@
                     <li>Chủ doanh nghiệp muốn hiểu và triển khai nội dung hiệu quả.</li>
                 </ul>
 
-                <p class="fs-1 fw-bold mb-1 mt-5">Giảng viên</p>
+
+               <p class="fs-1 fw-bold mb-1 mt-5">Giảng viên</p>
                 <?php if($course->author): ?>
                     <p class="fs-3 mb-1"><?php echo e($course->author); ?></p>
                 <?php else: ?>
@@ -119,7 +123,7 @@
                         </div>
                         <div class="col-md-6 col-lg-12 d-flex flex-column">
                             <p class="fs-1 mt-4 mb-1 fw-medium mb-1"><?php echo e($course->title); ?></p>
-                            <?php if($course->author): ?>
+                              <?php if($course->author): ?>
                                 <p class="fs-3 fst-italic mb-1">Tác giả: <?php echo e($course->author); ?></p>
                             <?php endif; ?>
                             <?php if($categoryNames): ?>
@@ -133,17 +137,26 @@
                             <?php endif; ?>
                             <p class="fs-3 fst-italic mb-lg-5"><?php echo e($displayPrice); ?></p>
 
+                            <?php $studentLoggedIn = auth('student')->check(); ?>
                             <?php if($hasAccess): ?>
                                 <a class="btn btn-primary fs-3 rounded-4 fw-bold mt-auto mb-2" href="<?php echo e(route('student.course.learn', ['course' => $course->id])); ?>" role="button">Vào học</a>
                             <?php else: ?>
-                                <a class="btn btn-primary fs-3 rounded-4 fw-bold mt-auto mb-2" href="<?php echo e(route('student.cart', ['course' => $course->id])); ?>" role="button">Đăng ký</a>
+                                <?php if($studentLoggedIn): ?>
+                                    <a class="btn btn-primary fs-3 rounded-4 fw-bold mt-auto mb-2" href="<?php echo e(route('student.cart', ['course' => $course->id])); ?>" role="button">Đăng ký</a>
+                                <?php else: ?>
+                                    <button class="btn btn-primary fs-3 rounded-4 fw-bold mt-auto mb-2 btn-open-login-required" type="button">Đăng ký</button>
+                                <?php endif; ?>
                                 <a class="btn btn-primary fs-3 rounded-4 fw-bold mt-2 mb-2" href="<?php echo e(route('student.course.learn', ['course' => $course->id])); ?>" role="button">Vào học</a>
                             <?php endif; ?>
                         </div>
                     </div>
                 </div>
                 <?php if(!$hasAccess): ?>
-                    <a class="btn btn-primary fs-3 rounded-4 fw-bold mt-sm-3 mt-md-5 mt-lg-5 mx-lg-5 mb-5 shadow-sm ms-sm-auto me-sm-auto d-none" href="<?php echo e(route('student.cart', ['course' => $course->id])); ?>" role="button">Đăng ký</a>
+                    <?php if($studentLoggedIn): ?>
+                        <a class="btn btn-primary fs-3 rounded-4 fw-bold mt-sm-3 mt-md-5 mt-lg-5 mx-lg-5 mb-5 shadow-sm ms-sm-auto me-sm-auto d-none" href="<?php echo e(route('student.cart', ['course' => $course->id])); ?>" role="button">Đăng ký</a>
+                    <?php else: ?>
+                        <button class="btn btn-primary fs-3 rounded-4 fw-bold mt-sm-3 mt-md-5 mt-lg-5 mx-lg-5 mb-5 shadow-sm ms-sm-auto me-sm-auto d-none btn-open-login-required" type="button">Đăng ký</button>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
         </div>
@@ -156,11 +169,11 @@
         <div class="modal-content">
             <div class="modal-body p-0">
                 <div class="ratio ratio-16x9">
-                    <iframe id="previewPlayer" src="" title="Học thử" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    <iframe id="previewPlayer" src="" title="Há»c thá»­" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ÄĂ³ng</button>
             </div>
         </div>
     </div>
@@ -170,9 +183,22 @@
     <div class="modal-dialog modal-dialog-centered" style="max-width: 600px; width: 95%;">
         <div class="modal-content">
             <div class="modal-body">
-                <p class="fs-3 mb-0">Bạn cần mua khóa học để xem video này.</p>
+                <p class="fs-3 mb-0">Báº¡n cáº§n mua khĂ³a há»c Ä‘á»ƒ xem video nĂ y.</p>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ÄĂ³ng</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 600px; width: 95%;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p class="fs-3 mb-0">Bạn cần đăng nhập để mua khóa học này.</p>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary" href="<?php echo e(route('student.login')); ?>">Đăng nhập</a>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
@@ -186,6 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleLabel = toggleBtn?.querySelector('.toggle-label');
     const visibleCount = 8;
     const userHasAccess = <?php echo e($hasAccess ? 'true' : 'false'); ?>;
+    const studentLoggedIn = <?php echo e(($studentLoggedIn ?? false) ? 'true' : 'false'); ?>;
 
     const applyLessonVisibility = (expanded) => {
         if (!lessonItems.length) return;
@@ -193,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
             item.style.display = expanded || idx < visibleCount ? '' : 'none';
         });
         if (toggleLabel) {
-            toggleLabel.textContent = expanded ? 'Thu gọn' : 'Xem thêm';
+            toggleLabel.textContent = expanded ? 'Thu gá»n' : 'Xem thĂªm';
         }
     };
 
@@ -209,9 +236,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const modalElement = document.getElementById('previewModal');
     const modalBlockedElement = document.getElementById('previewBlockedModal');
+    const modalLoginRequiredElement = document.getElementById('loginRequiredModal');
     const player = document.getElementById('previewPlayer');
     const modal = modalElement ? new bootstrap.Modal(modalElement) : null;
     const blockedModal = modalBlockedElement ? new bootstrap.Modal(modalBlockedElement) : null;
+    const loginRequiredModal = modalLoginRequiredElement ? new bootstrap.Modal(modalLoginRequiredElement) : null;
 
     const getEmbedUrl = (url) => {
         if (!url) return '';
@@ -238,6 +267,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    if (!studentLoggedIn && loginRequiredModal) {
+        document.querySelectorAll('.btn-open-login-required').forEach((btn) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginRequiredModal.show();
+            });
+        });
+    }
+
     if (modalElement) {
         modalElement.addEventListener('hidden.bs.modal', () => {
             player.src = '';
@@ -246,5 +284,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <?php $__env->stopPush(); ?>
+
+
+
+
+
+
+
+
+
+
+
 
 <?php echo $__env->make('student.layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\online-om\resources\views/student/course-detail.blade.php ENDPATH**/ ?>

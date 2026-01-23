@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         \App\Providers\AuthServiceProvider::class,
     ])
     ->withMiddleware(function (Middleware $middleware): void {
+        // Redirect unauthenticated users (default auth middleware) to student login
+        $middleware->redirectGuestsTo(fn () => route('student.login'));
+
         $middleware->alias([
             'admin.auth' => \App\Http\Middleware\AdminAuthenticate::class,
         ]);

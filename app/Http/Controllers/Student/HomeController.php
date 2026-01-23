@@ -28,7 +28,7 @@ class HomeController extends Controller
         $showFilterResults = !$isHome || $q !== '';
 
         $filterHeading = $showFilterResults
-            ? ($categoryMap[$categoryKey] ?? 'Khóa học')
+            ? ($categoryMap[$categoryKey] ?? 'KhĂ³a há»c')
             : null;
 
         $filterCourses = collect();
@@ -64,12 +64,17 @@ class HomeController extends Controller
 
         if ($isHome && $q === '') {
             $student = auth('student')->user();
+            $ownedCourseIds = collect();
+
             if ($student) {
                 $libraryCourses = $student->courses()
                     ->with('categories')
                     ->where('status', 'published')
                     ->latest('published_at')
                     ->get();
+
+                // Danh sách khóa học đã sở hữu để loại khỏi đề xuất
+                $ownedCourseIds = $libraryCourses->pluck('id');
             } else {
                 $libraryCourses = Course::with('categories')
                     ->where('status', 'published')
@@ -86,6 +91,9 @@ class HomeController extends Controller
                 ->whereHas('categories', function ($qCat) {
                     $qCat->where('name', 'Đề xuất');
                 })
+                ->when($ownedCourseIds->isNotEmpty(), function ($q) use ($ownedCourseIds) {
+                    $q->whereNotIn('id', $ownedCourseIds);
+                })
                 ->latest('published_at')
                 ->take(5)
                 ->get();
@@ -95,6 +103,9 @@ class HomeController extends Controller
                 ->whereHas('categories', function ($qCat) {
                     $qCat->where('name', 'Nổi bật');
                 })
+                ->when($ownedCourseIds->isNotEmpty(), function ($q) use ($ownedCourseIds) {
+                    $q->whereNotIn('id', $ownedCourseIds);
+                })
                 ->latest('published_at')
                 ->take(5)
                 ->get();
@@ -103,6 +114,9 @@ class HomeController extends Controller
                 ->where('status', 'published')
                 ->whereHas('categories', function ($qCat) {
                     $qCat->where('name', 'Mới ra');
+                })
+                ->when($ownedCourseIds->isNotEmpty(), function ($q) use ($ownedCourseIds) {
+                    $q->whereNotIn('id', $ownedCourseIds);
                 })
                 ->latest('published_at')
                 ->take(5)
@@ -230,7 +244,7 @@ class HomeController extends Controller
         }
         $student->save();
 
-        return back()->with('status', 'Cập nhật hồ sơ thành công.');
+        return back()->with('status', 'Cáº­p nháº­t há»“ sÆ¡ thĂ nh cĂ´ng.');
     }
 
     public function myCourses()
@@ -266,7 +280,7 @@ class HomeController extends Controller
         }
         if (!$hasAccess) {
             return redirect()->route('student.course-detail', ['course' => $course->id])
-                ->with('msg', 'Bạn cần mua khóa học để vào học.');
+                ->with('msg', 'Báº¡n cáº§n mua khĂ³a há»c Ä‘á»ƒ vĂ o há»c.');
         }
 
         $lessons = $course->chapters->flatMap(fn ($chapter) => $chapter->lessons)->values();

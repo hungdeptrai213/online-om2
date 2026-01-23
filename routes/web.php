@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\CourseContentController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\StudentCourseController as AdminStudentCourseController;
+use App\Http\Controllers\Admin\CommentController as AdminCommentController;
 use App\Http\Controllers\Student\CheckoutController;
 use App\Http\Controllers\Student\CommentController;
 
@@ -21,9 +22,8 @@ Route::get('/lich-hoc', [HomeController::class, 'schedule'])->name('student.sche
 Route::get('/tai-lieu', [HomeController::class, 'materials'])->name('student.materials');
 Route::get('/goi-doanh-nghiep', [HomeController::class, 'enterprise'])->name('student.enterprise');
 Route::get('/khoa-hoc/chi-tiet', [HomeController::class, 'courseDetail'])->name('student.course-detail');
-Route::get('/gio-hang', [HomeController::class, 'cart'])->name('student.cart');
-
 Route::middleware('auth:student')->group(function () {
+    Route::get('/gio-hang', [HomeController::class, 'cart'])->name('student.cart');
     Route::post('/gio-hang/xac-nhan', [CheckoutController::class, 'confirm'])->name('student.cart.confirm');
     Route::get('/ho-so', [HomeController::class, 'profile'])->name('student.profile');
     Route::get('/khoa-hoc-cua-toi', [HomeController::class, 'myCourses'])->name('student.my-courses');
@@ -73,5 +73,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('students/{student}/courses/{course}', [AdminStudentCourseController::class, 'destroy'])->name('students.courses.destroy');
         Route::get('students/{student}/courses-json', [AdminStudentCourseController::class, 'list'])->name('students.courses.list');
         Route::post('students/{student}/courses-sync', [AdminStudentCourseController::class, 'sync'])->name('students.courses.sync');
+        Route::get('comments', [AdminCommentController::class, 'index'])->name('comments.index');
     });
 });

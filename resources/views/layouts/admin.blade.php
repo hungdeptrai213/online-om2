@@ -301,6 +301,7 @@
         @php($userActive = request()->routeIs('admin.users.*'))
         @php($studentActive = request()->routeIs('admin.students.*'))
         @php($categoryActive = request()->routeIs('admin.categories.*'))
+        @php($commentActive = request()->routeIs('admin.comments.*'))
         <div class="nav-group">
             <div class="nav-item active">
                 <i class="fa-solid fa-chart-pie"></i>
@@ -363,10 +364,10 @@
                 <i class="fa-solid fa-folder-open"></i>
                 <span class="nav-label">Tài liệu</span>
             </div>
-            <div class="nav-item">
+            <a class="nav-item {{ $commentActive ? 'active' : '' }}" href="{{ route('admin.comments.index') }}">
                 <i class="fa-solid fa-comments"></i>
                 <span class="nav-label">Bình luận</span>
-            </div>
+            </a>
             <div class="nav-item">
                 <i class="fa-solid fa-user-check"></i>
                 <span class="nav-label">Theo dõi đăng ký</span>
