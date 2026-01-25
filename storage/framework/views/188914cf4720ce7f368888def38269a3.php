@@ -16,6 +16,7 @@
                 <option value="">Loại form</option>
                 <option value="coaching" <?php if(($formType ?? '') === 'coaching'): echo 'selected'; endif; ?>>Coaching 1:1</option>
                 <option value="enterprise" <?php if(($formType ?? '') === 'enterprise'): echo 'selected'; endif; ?>>Doanh nghiệp</option>
+                <option value="teach" <?php if(($formType ?? '') === 'teach'): echo 'selected'; endif; ?>>Dạy trên OM Edu</option>
             </select>
             <button type="submit" class="btn-dark" style="padding:9px 14px;border-radius:6px;">Lọc</button>
             <a href="<?php echo e(route('admin.forms.index')); ?>" style="color:#1f2d3d;text-decoration:none;">Xóa lọc</a>
@@ -38,7 +39,18 @@
                     <tr style="border-bottom:1px solid #eef1f7;">
                         <td style="padding:10px 12px;color:#6b7280;"><?php echo e(($submissions->currentPage()-1)*$submissions->perPage() + $idx + 1); ?></td>
                         <td style="padding:10px 12px;">
-                            <div style="font-weight:600;"><?php echo e($submission->form_type === 'coaching' ? 'Coaching 1:1' : 'Doanh nghiệp'); ?></div>
+                            <div style="font-weight:600;">
+                                <?php switch($submission->form_type):
+                                    case ('coaching'): ?>
+                                        Coaching 1:1
+                                        <?php break; ?>
+                                    <?php case ('enterprise'): ?>
+                                        Doanh nghiệp
+                                        <?php break; ?>
+                                    <?php default: ?>
+                                        Dạy trên OM Edu
+                                <?php endswitch; ?>
+                            </div>
                             <?php if($submission->form_type === 'coaching' && $submission->plan_type): ?>
                                 <div class="muted" style="font-size:13px;">Gói: <?php echo e($submission->plan_type === 'buoi_le' ? 'Buổi lẻ' : 'Lộ trình'); ?></div>
                             <?php endif; ?>
@@ -57,12 +69,14 @@
                             <?php if($submission->form_type === 'enterprise'): ?>
                                 <div><strong>Công ty:</strong> <?php echo e($submission->company ?? '—'); ?></div>
                                 <div class="muted" style="font-size:13px;"><?php echo e($submission->employee_count ? 'Nhân sự: ' . $submission->employee_count : ''); ?></div>
+                            <?php elseif($submission->form_type === 'teach'): ?>
+                                <div><strong>Lĩnh vực:</strong> <?php echo e($submission->field ?? '—'); ?></div>
                             <?php else: ?>
                                 <span class="muted">—</span>
                             <?php endif; ?>
                         </td>
                         <td style="padding:10px 12px;max-width:360px;">
-                            <div style="white-space:pre-line;"><?php echo e($submission->message); ?></div>
+                            <div style="white-space:pre-line;"><?php echo e($submission->message ?? $submission->field); ?></div>
                         </td>
                         <td style="padding:10px 12px;">
                             <div><?php echo e($submission->created_at->format('d/m/Y H:i')); ?></div>

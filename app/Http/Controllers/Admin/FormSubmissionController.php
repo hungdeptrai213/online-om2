@@ -18,7 +18,8 @@ class FormSubmissionController extends Controller
                     ->orWhere('email', 'like', "%{$search}%")
                     ->orWhere('company', 'like', "%{$search}%")
                     ->orWhere('contact_name', 'like', "%{$search}%")
-                    ->orWhere('message', 'like', "%{$search}%");
+                    ->orWhere('message', 'like', "%{$search}%")
+                    ->orWhere('field', 'like', "%{$search}%");
             });
         }
 

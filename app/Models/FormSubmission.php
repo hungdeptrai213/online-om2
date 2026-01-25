@@ -20,5 +20,6 @@ class FormSubmission extends Model
         'contact_phone',
         'employee_count',
         'message',
+        'field',
     ];
 }

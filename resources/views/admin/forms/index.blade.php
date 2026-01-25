@@ -18,6 +18,7 @@
                 <option value="">Loại form</option>
                 <option value="coaching" @selected(($formType ?? '') === 'coaching')>Coaching 1:1</option>
                 <option value="enterprise" @selected(($formType ?? '') === 'enterprise')>Doanh nghiệp</option>
+                <option value="teach" @selected(($formType ?? '') === 'teach')>Dạy trên OM Edu</option>
             </select>
             <button type="submit" class="btn-dark" style="padding:9px 14px;border-radius:6px;">Lọc</button>
             <a href="{{ route('admin.forms.index') }}" style="color:#1f2d3d;text-decoration:none;">Xóa lọc</a>
@@ -40,7 +41,18 @@
                     <tr style="border-bottom:1px solid #eef1f7;">
                         <td style="padding:10px 12px;color:#6b7280;">{{ ($submissions->currentPage()-1)*$submissions->perPage() + $idx + 1 }}</td>
                         <td style="padding:10px 12px;">
-                            <div style="font-weight:600;">{{ $submission->form_type === 'coaching' ? 'Coaching 1:1' : 'Doanh nghiệp' }}</div>
+                            <div style="font-weight:600;">
+                                @switch($submission->form_type)
+                                    @case('coaching')
+                                        Coaching 1:1
+                                        @break
+                                    @case('enterprise')
+                                        Doanh nghiệp
+                                        @break
+                                    @default
+                                        Dạy trên OM Edu
+                                @endswitch
+                            </div>
                             @if($submission->form_type === 'coaching' && $submission->plan_type)
                                 <div class="muted" style="font-size:13px;">Gói: {{ $submission->plan_type === 'buoi_le' ? 'Buổi lẻ' : 'Lộ trình' }}</div>
                             @endif
@@ -57,12 +69,14 @@
                             @if($submission->form_type === 'enterprise')
                                 <div><strong>Công ty:</strong> {{ $submission->company ?? '—' }}</div>
                                 <div class="muted" style="font-size:13px;">{{ $submission->employee_count ? 'Nhân sự: ' . $submission->employee_count : '' }}</div>
+                            @elseif($submission->form_type === 'teach')
+                                <div><strong>Lĩnh vực:</strong> {{ $submission->field ?? '—' }}</div>
                             @else
                                 <span class="muted">—</span>
                             @endif
                         </td>
                         <td style="padding:10px 12px;max-width:360px;">
-                            <div style="white-space:pre-line;">{{ $submission->message }}</div>
+                            <div style="white-space:pre-line;">{{ $submission->message ?? $submission->field }}</div>
                         </td>
                         <td style="padding:10px 12px;">
                             <div>{{ $submission->created_at->format('d/m/Y H:i') }}</div>

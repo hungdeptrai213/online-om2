@@ -99,8 +99,10 @@
                         ]); ?>" href="<?php echo e(route('student.materials')); ?>">Tài Liệu</a>
                     </li>
                     <div class="d-sm-flex d-lg-none my-3 align-items-center">
-                        <a class="btn btn-primary me-2 p-xl-4 p-lg-3 fs-4 fw-bold rounded-4" href="#"
-                            role="button">Dạy trên OM Edu</a>
+                    <button class="btn btn-primary me-2 p-xl-4 p-lg-3 fs-4 fw-bold rounded-4" type="button"
+                            data-bs-toggle="modal" data-bs-target="#teachModal" data-teach-modal>
+                        Dạy trên OM Edu
+                    </button>
                         <?php if(auth()->guard('student')->check()): ?>
                             <?php ($student = auth('student')->user()); ?>
                             <?php ($avatarUrl = $student->avatar ? asset($student->avatar) : null); ?>
@@ -150,8 +152,10 @@
             </div> 
 
             <div class="d-flex two-button align-items-center">
-                <a class="btn btn-primary me-2 px-4 fs-5 rounded-4 fw-bold" style="height:60px; display:flex; align-items:center; border-radius:12px;" href="#"
-                    role="button">Dạy trên OM Edu</a>
+                <button class="btn btn-primary me-2 px-4 fs-5 rounded-4 fw-bold" style="height:60px; display:flex; align-items:center; border-radius:12px;"
+                        type="button" data-bs-toggle="modal" data-bs-target="#teachModal" data-teach-modal>
+                    Dạy trên OM Edu
+                </button>
                 <?php if(auth()->guard('student')->check()): ?>
                     <?php ($student = auth('student')->user()); ?>
                     <?php ($avatarUrl = $student->avatar ? asset($student->avatar) : null); ?>
@@ -191,8 +195,8 @@
                         </ul>
                     </div>
                 <?php else: ?>
-                            <a class="btn btn-primary px-4 fs-5 rounded-4 fw-bold" style="height:60px; display:flex; align-items:center; border-radius:12px;" href="/dang-nhap"
-                                role="button">Đăng nhập</a>
+                    <a class="btn btn-primary px-4 fs-5 rounded-4 fw-bold" style="height:60px; display:flex; align-items:center; border-radius:12px;" href="/dang-nhap"
+                        role="button">Đăng nhập</a>
                 <?php endif; ?>
             </div>
 
@@ -201,6 +205,21 @@
 
 
 
+    <?php if(session('teach_success')): ?>
+        <div class="teach-alert-wrapper">
+            <div class="alert alert-success teach-alert" data-autohide="5000" role="alert">
+                <?php echo e(session('teach_success')); ?>
+
+            </div>
+        </div>
+    <?php elseif(session('teach_error')): ?>
+        <div class="teach-alert-wrapper">
+            <div class="alert alert-danger teach-alert" data-autohide="5000" role="alert">
+                <?php echo e(session('teach_error')); ?>
+
+            </div>
+        </div>
+    <?php endif; ?>
     <?php echo $__env->yieldContent('content'); ?>
 
 
@@ -242,7 +261,77 @@
 
     <?php echo $__env->yieldPushContent('scripts'); ?>
 
+    <!-- Teach modal -->
+    <div class="modal fade teach-modal" id="teachModal" tabindex="-1" aria-labelledby="teachModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-5 shadow-sm">
+                <div class="modal-header border-0">
+                    <h3 class="modal-title fw-bold" id="teachModalLabel">Dạy trên OM Edu</h3>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="fs-4 fw-bolder mb-3">Gửi thông tin giáo viên/coach muốn hợp tác</p>
+                    <form method="post" action="<?php echo e(route('student.teach.submit')); ?>" class="row g-3">
+                        <?php echo csrf_field(); ?>
+                        <div class="col-12">
+                            <input name="name" type="text" class="form-control p-2 shadow-sm rounded-4 fs-4 ps-3" placeholder="Họ tên" required>
+                        </div>
+                        <div class="col-12">
+                            <input name="phone" type="text" class="form-control p-2 shadow-sm rounded-4 fs-4 ps-3" placeholder="Số điện thoại" required>
+                        </div>
+                        <div class="col-12">
+                            <input name="email" type="email" class="form-control p-2 shadow-sm rounded-4 fs-4 ps-3" placeholder="Email" required>
+                        </div>
+                        <div class="col-12">
+                            <textarea name="field" class="form-control p-2 shadow-sm rounded-4 fs-4 ps-3" rows="3" placeholder="Lĩnh vực bạn đào tạo là gì" required></textarea>
+                        </div>
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-primary px-4 py-3 fs-5 rounded-4 w-100">
+                                Gửi thông tin
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modalEl = document.getElementById('teachModal');
+            if (!modalEl) {
+                return;
+            }
+            const bsModal = new bootstrap.Modal(modalEl);
+            document.querySelectorAll('[data-teach-modal]').forEach((el) => {
+                el.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    bsModal.show();
+                });
+            });
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const autoHideAlerts = document.querySelectorAll('[data-autohide]');
+            autoHideAlerts.forEach((alertEl) => {
+                const delay = Math.max(0, parseInt(alertEl.dataset.autohide, 10) || 5000);
+                setTimeout(() => {
+                    alertEl.style.transition = 'opacity 0.4s ease';
+                    alertEl.style.opacity = '0';
+                    setTimeout(() => {
+                        const wrapper = alertEl.closest('.teach-alert-wrapper');
+                        if (wrapper) {
+                            wrapper.remove();
+                        } else if (alertEl.parentNode) {
+                            alertEl.parentNode.removeChild(alertEl);
+                        }
+                    }, 500);
+                }, delay);
+            });
+        });
+    </script>
 
 </body>
 

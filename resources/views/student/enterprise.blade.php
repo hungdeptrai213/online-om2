@@ -16,11 +16,11 @@
                     <p class="text-center fs-2 fw-bolder">Thông tin của bạn</p>
 
                     @if (session('enterprise_success'))
-                        <div class="alert alert-success text-center" role="alert">
+                        <div class="alert alert-success text-center" data-autohide="5000" role="alert">
                             {{ session('enterprise_success') }}
                         </div>
                     @elseif(session('enterprise_error'))
-                        <div class="alert alert-danger text-center" role="alert">
+                        <div class="alert alert-danger text-center" data-autohide="5000" role="alert">
                             {{ session('enterprise_error') }}
                         </div>
                     @endif

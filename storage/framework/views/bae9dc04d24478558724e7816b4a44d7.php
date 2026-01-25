@@ -131,15 +131,22 @@
         const iframe = document.getElementById('lessonPlayer');
         const videoUrl = <?php echo json_encode($currentLesson->video_url ?? '', 15, 512) ?>;
 
-        const getEmbedUrl = (url) => {
-            if (!url) return '';
-            const ytWatch = url.match(/(?:youtube\.com\/watch\?v=)([\w-]+)/i);
-            const ytShort = url.match(/youtu\.be\/([\w-]+)/i);
+        const getEmbedUrl = (input) => {
+            if (!input) return '';
+
+            const iframeMatch = input.match(/src=["']([^"']+)["']/i);
+            if (iframeMatch) {
+                return iframeMatch[1];
+            }
+
+            const ytWatch = input.match(/(?:youtube\.com\/watch\?v=)([\w-]+)/i);
+            const ytShort = input.match(/youtu\.be\/([\w-]+)/i);
             const videoId = ytWatch ? ytWatch[1] : ytShort ? ytShort[1] : null;
             if (videoId) {
                 return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
             }
-            return url;
+
+            return input;
         };
 
         iframe.src = getEmbedUrl(videoUrl);

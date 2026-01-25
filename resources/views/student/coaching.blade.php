@@ -436,11 +436,11 @@
                     </div>
                     <p class="text-center fs-2 fw-bolder mt-4">Thông tin của bạn</p>
                     @if (session('coaching_success'))
-                        <div class="alert alert-success text-center" role="alert">
+                        <div class="alert alert-success text-center" data-autohide="5000" role="alert">
                             {{ session('coaching_success') }}
                         </div>
                     @elseif(session('coaching_error'))
-                        <div class="alert alert-danger text-center" role="alert">
+                        <div class="alert alert-danger text-center" data-autohide="5000" role="alert">
                             {{ session('coaching_error') }}
                         </div>
                     @endif

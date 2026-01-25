@@ -436,12 +436,12 @@
                     </div>
                     <p class="text-center fs-2 fw-bolder mt-4">Thông tin của bạn</p>
                     <?php if(session('coaching_success')): ?>
-                        <div class="alert alert-success text-center" role="alert">
+                        <div class="alert alert-success text-center" data-autohide="5000" role="alert">
                             <?php echo e(session('coaching_success')); ?>
 
                         </div>
                     <?php elseif(session('coaching_error')): ?>
-                        <div class="alert alert-danger text-center" role="alert">
+                        <div class="alert alert-danger text-center" data-autohide="5000" role="alert">
                             <?php echo e(session('coaching_error')); ?>
 
                         </div>

@@ -24,6 +24,7 @@ Route::get('/lich-hoc', [HomeController::class, 'schedule'])->name('student.sche
 Route::get('/tai-lieu', [HomeController::class, 'materials'])->name('student.materials');
 Route::get('/goi-doanh-nghiep', [HomeController::class, 'enterprise'])->name('student.enterprise');
 Route::post('/goi-doanh-nghiep', [HomeController::class, 'submitEnterprise'])->name('student.enterprise.submit');
+Route::post('/teach', [HomeController::class, 'submitTeach'])->name('student.teach.submit');
 Route::get('/khoa-hoc/chi-tiet', [HomeController::class, 'courseDetail'])->name('student.course-detail');
 Route::middleware('auth:student')->group(function () {
     Route::get('/gio-hang', [HomeController::class, 'cart'])->name('student.cart');

@@ -1253,5 +1253,28 @@ button.btn.btn-primary.me-2.p-1.px-3.fs-4.fw-bold.rounded-4.rounded-pill.plan-bt
 }
 
 button.btn.p-1.px-3.fs-4.fw-bold.rounded-4.plan-btn.btn-light {
- border-radius: 30px !important;
+    border-radius: 30px !important;
+}
+
+.teach-alert-wrapper {
+    max-width: 720px;
+    margin: 1rem auto;
+}
+
+.teach-alert {
+    border-radius: 20px;
+    font-size: 0.95rem;
+    padding: 0.65rem 1.15rem;
+}
+
+.teach-modal .modal-dialog {
+    max-width: 38%;
+}
+.modal-content.rounded-5.shadow-sm {
+    padding: 20px;
+}
+@media (max-width: 992px) {
+    .teach-modal .modal-dialog {
+        max-width: 90%;
+    }
 }

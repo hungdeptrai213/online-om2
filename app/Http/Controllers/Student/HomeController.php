@@ -219,6 +219,32 @@ class HomeController extends Controller
         }
     }
 
+    public function submitTeach(Request $request)
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:50'],
+            'email' => ['required', 'email', 'max:255'],
+            'field' => ['required', 'string', 'max:2000'],
+        ]);
+
+        try {
+            FormSubmission::create([
+                'form_type' => 'teach',
+                'name' => $data['name'],
+                'phone' => $data['phone'],
+                'email' => $data['email'],
+                'message' => $data['field'],
+                'field' => $data['field'],
+            ]);
+
+            return back()->with('teach_success', 'Cảm ơn bạn đã quan tâm, chúng tôi sẽ liên hệ sớm nhất.');
+        } catch (\Throwable $e) {
+            report($e);
+            return back()->withInput()->with('teach_error', 'Gửi thông tin thất bại, vui lòng thử lại sau.');
+        }
+    }
+
     public function courseDetail(Request $request, $courseId = null)
     {
         $courseId = $courseId ?? $request->get('course');
