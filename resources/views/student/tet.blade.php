@@ -1,253 +1,504 @@
-@extends('layouts.client')
+@extends('student.layouts.app')
+
+@section('style')
+    <link rel="stylesheet" href="/om-front/css/custom-option.css">
+@endsection
+
 @section('content')
-    {{-- @include('parts.clients.page_title') --}}
-    <section class="all-course py-2 checkout-page">
-        <div class="container">
-            <h2 class="py-2">Thanh toán đơn hàng <a
-                    href="{{ route('students.account.order-detail', $id) }}">#{{ $id }}</a>
-                @if (config('checkout.checkout_countdown') > 0)
-                    <span class="countdown"><span>00</span>:<span>00</span>
-                @endif
 
-            </h2>
-            <hr>
-            <div class="row">
-                <div class="col-12 col-md-6 cot-1" style="padding: 10px 20px 10px 10px;">
-                    @include('Students::clients.partials.coupon')
-                    <table class="table table-carrt">
-                        <thead>
-                            <tr>
-                                <th class="text-center" width="5%">#</th>
-                                <th>Khóa học</th>
-                                <th width="20%" class="tri">Thành tiền</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($order->detail as $key => $item)
-                                <tr>
-                                    <td class="text-center">{{ $key + 1 }}</td>
-                                    <td class="name-course">{{ $item?->course?->name }}
-                                        <p class="teacher-name">{{ $item?->course?->teacher?->name }}</p>
-                                    </td>
-                                    <td width="20%" class="tri">{{ money($item?->course?->price) }}</td>
-                                </tr>
-                            @endforeach
-                            <tr>
-                                <td colspan="2" class="tri fw-600">Tạm tính:</td>
-                                <td width="20%" class="tri">{{ money($order->total) }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" class="tri fw-600">Giảm giá:</td>
-                                <td width="20%" class="tri discount-value">{{ money($order->discount, freeText: '0') }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="2" class="tri fw-600">Tổng cộng:<p class="text-fade-vat">(Đã bao gồm VAT)
-                                    </p>
-                                </td>
-                                <td width="20%" class="tri total-value">{{ money($order->total - $order->discount) }}</td>
-                            </tr>
 
-                        </tbody>
-                    </table>
-                   
+
+        <!-- Lo trinh hoc coaching -->
+        <div class="container mt-6 overflow-hidden">
+
+            <div class="d-flex flex-nowrap w-100">
+                <div class="flex-grow-1 d-sm-none d-lg-block grey-bg me-5"> </div>
+                <div class="fs-custom-3 text-center fw-bold d-flex align-items-center justify-content-center mx-auto">
+                    Lộ trình học Coaching
                 </div>
-                <div class="col-12 col-md-6" style="padding: 10px;  text-align: right;">
-                    <div class="row">
-                        <div class="col-12 col-md-8">
-                            <h4 class="mb-3">Thông tin thanh toán</h4>
-                            <p>Quý khách vui lòng chuyển khoản tới số tài khoản bên dưới hoặc quét mã QR để thực hiện thanh
-                                toán. Vui lòng nhập đúng số tiền và nội dung chuyển khoản</p>
-                            <hr>
-                            <p>- Ngân hàng MB Bank </p>
-                            <p>- Số tài khoản: <span>163448866</span> <i class="bank-copy fa-regular fa-copy"></i>
-                            </p>
-                            <p>- Chủ tài khoản: Phạm Ngọc Hùng</p>
-                            <p>- Số tiền: <span class="total-value">{{ money($order->total - $order->discount) }}</span>
-                            </p>
-                            <p>- Nội dung:
-                           
+                <div class="flex-grow-1 d-sm-none d-lg-block grey-bg ms-5"> </div>
+            </div>
 
-                                <span>{{ preg_replace('/[^a-zA-Z0-9]/', '', preg_replace('/@.*/', '', $student->email)) }}{{ $order->id }}</span> <i
-                                    class="bank-copy fa-regular fa-copy"></i>
-                            </p>
-                            <hr>
-                            <p><strong><i style="color:#f7d078;">Lưu ý: Khách hàng không nên thoát trang khi đang thanh toán. <span style="color:#f7d078;">Hệ thống sẽ tự động xác nhận thanh toán cho đơn hàng sau 5s-10s.</span></i></strong></p>
-                        </div>
-                        <div class="col-12 col-md-4">
-
-                            <div class="text-center">
-                                <img class="qr-img" style="width: 230px"
-                                    src="https://img.vietqr.io/image/mb-163448866-compact2.jpg?amount={{ $order->total - $order->discount }}&addInfo={{ preg_replace('/[^a-zA-Z0-9]/', '', preg_replace('/@.*/', '', $student->email))}}{{ $order->id }}"alt="">
-                                <button class="btn btn-success btn-sm download-qr">Tải QR Code</button>
-                            </div>
-                        </div>
+            <div class="row mt-6 justify-content-center">
+                <div class="col-sm-12 col-lg-4 mb-4">
+                    <div class="shadow-sm rounded-5 py-4 px-5 height-100">
+                        <span class="fs-custom-3 fw-bold">1. </span>
+                        <span class="fs-1 fw-bold fst-italic"> Học viên đăng ký form</span>
+                        <p class="fs-3 fst-italic">Hãy cho chúng tôi biết thông tin liên hệ và mục tiêu hoặc nội dung bạn
+                            muốn được đào tạo.</p>
                     </div>
-                    <a href="/khoa-hoc" class="btn btn-primary btn-sm btn-mua-them">Mua khoá học khác</a>
-                    <button
-                        onclick="checkPaid({{ $order->total - $order->discount }}, '{{ $student->email }}{{ $order->id }}')"
-                        class="btn btn-success btn-sm btn-thanh-toan">Xác nhận đã thanh toán</button>
+                </div>
+
+                <div class="col-sm-12 col-lg-4 mb-4">
+                    <div class="shadow-sm rounded-5 py-4 px-5 height-100">
+                        <span class="fs-custom-3 fw-bold">2. </span>
+                        <span class="fs-1 fw-bold fst-italic"> Buổi tư vấn 30 phút miễn phí</span>
+                        <p class="fs-3 fst-italic mb-0">Hãy chú ý điện thoại, sau khi đăng ký bạn sẽ nhận được 1 buổi tư
+                            vấn miễn phí với những nội dung sau:</p>
+                        <ul class="fst-italic fs-3">
+                            <li>Đánh giá năng lực hiện tại</li>
+                            <li>Giải đáp thắc mắc của học viên</li>
+                            <li>Sắp xếp lịch học với chuyên gia</li>
+                            <li>Xây dựng lộ trình và báo giá Coaching</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-lg-4 mb-4">
+                    <div class="shadow-sm rounded-5 py-4 px-5 height-100">
+                        <span class="fs-custom-3 fw-bold">3. </span>
+                        <span class="fs-1 fw-bold fst-italic"> Bắt đầu Coaching 1:1</span>
+                        <p class="fs-3 fst-italic mb-0">Hãy chú ý điện thoại, sau khi đăng ký bạn sẽ nhận được 1 buổi tư
+                            vấn miễn phí với những nội dung sau:</p>
+                        <ul class="fst-italic fs-3">
+                            <li>Cung cấp các tài liệu hỗ trợ học tập liên quan.</li>
+                            <li>Liên tục nhắc nhở học viên bám sát lộ trình.</li>
+                            <li>Đánh giá và cải thiện liên tục.</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
-    <div id="payment-popup" class="popup">
-        <div class="popup-content">
-            <h3><strong>Thanh toán thành công!! </strong></h3>
-            <p>Hệ thống sẽ tự động chuyển về trang khóa học sau <span id="timer">5</span>s...
-            </p>
+
+        <div class="d-flex justify-content-center">
+            <i
+                class="bi bi-arrow-down text-center mt-5 fs-custom-2 shadow-sm px-3 pt-5 rounded-5 text-black-50 btn scroll-btn"></i>
         </div>
-    </div>
-    <div id="fail-popup" class="popup">
-        <div class="popup-content">
-            <h3><strong>Thanh toán thất bại!! </strong></h3>
-            <p>Hệ thống chưa ghi nhận được thanh toán đơn hàng...
-            </p>
+
+
+        <!-- Loi ich hoc vien -->
+        <div class="container mt-6 overflow-hidden">
+            <div class="d-flex flex-nowrap w-100">
+                <div class="flex-grow-1 d-sm-none d-lg-block grey-bg me-5"> </div>
+                <div class="fs-custom-3 text-center fw-bold d-flex align-items-center justify-content-center mx-auto">
+                    Lợi ích học viên
+                </div>
+                <div class="flex-grow-1 d-sm-none d-lg-block grey-bg ms-5"> </div>
+            </div>
+
+            <div class="row mt-6 justify-content-center">
+                <div class="col-sm-12 col-lg-4 col-xl-3 mb-4">
+                    <div class="shadow-sm rounded-5 p-sm-4 p-sm-3 p-md-4 p-lg-5 height-100">
+                        <p class="fs-2 fw-bold fst-italic">1. Lộ trình học cá nhân hóa 100%</p>
+                        <ul class="fst-italic fs-3">
+                            <li>Mỗi học viên có một kế hoạch học riêng, được thiết kế dựa trên mục tiêu, kinh nghiệm và
+                                ngành nghề của bạn.</li>
+                            <li>Không học dàn trải — chỉ tập trung vào những kỹ năng thực sự cần thiết để đạt kết quả nhanh
+                                nhất.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-lg-4 col-xl-3 mb-4">
+                    <div class="shadow-sm rounded-5 p-sm-4 p-md-4 p-lg-5 height-100">
+                        <p class="fs-2 fw-bold fst-italic">2. Học 1:1 trực tiếp cùng chuyên gia thực chiến</p>
+                        <ul class="fst-italic fs-3">
+                            <li>Làm việc 1:1 với coach, người đã có kinh nghiệm thực tế trong Marketing & Sales.</li>
+                            <li>Được hướng dẫn cụ thể từng bước, giải đáp mọi thắc mắc, hỗ trợ xuyên suốt hành trình học.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-lg-4 col-xl-3 mb-4">
+                    <div class="shadow-sm rounded-5 p-sm-4 p-md-4 p-lg-5 height-100">
+                        <p class="fs-2 fw-bold fst-italic">3. Học đi đôi với thực hành</p>
+                        <ul class="fst-italic fs-3">
+                            <li>Không chỉ học lý thuyết, bạn sẽ ứng dụng ngay vào công việc thực tế hoặc dự án riêng của
+                                mình.</li>
+                            <li>Sau mỗi buổi học đều có bài tập thực hành, phản hồi và chỉnh sửa chi tiết từ coach.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-lg-4 col-xl-3 mb-4">
+                    <div class="shadow-sm rounded-5 p-sm-4 p-md-4 p-lg-5 height-100">
+                        <p class="fs-2 fw-bold fst-italic">4. Phát triển kỹ năng tư duy & chiến lược</p>
+                        <ul class="fst-italic fs-3">
+                            <li>Học viên được rèn luyện khả năng phân tích thị trường, xây dựng chiến lược marketing, thiết
+                                lập quy trình bán hàng hiệu quả.</li>
+                            <li>Hiểu sâu cách vận hành toàn bộ hệ thống marketing - sales trong doanh nghiệp.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-lg-4 col-xl-3 mb-4">
+                    <div class="shadow-sm rounded-5 p-sm-4 p-md-4 p-lg-5 height-100">
+                        <p class="fs-2 fw-bold fst-italic">5. Tăng cơ hội nghề nghiệp & thu nhập</p>
+                        <ul class="fst-italic fs-3">
+                            <li>Tự tin ứng tuyển vị trí marketing/sales chuyên nghiệp</li>
+                            <li>Phát triển dự án cá nhân hoặc startup riêng</li>
+                            <li>Gia tăng doanh số nếu đang làm kinh doanh</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-lg-4 col-xl-3 mb-4">
+                    <div class="shadow-sm rounded-5 p-sm-4 p-md-4 p-lg-5 height-100">
+                        <p class="fs-2 fw-bold fst-italic">6. Hỗ trợ & mentoring lâu dài</p>
+                        <ul class="fst-italic fs-3">
+                            <li>Ngay cả sau khi kết thúc coaching, học viên vẫn được duy trì kết nối với mentor để hỏi đáp,
+                                cập nhật kiến thức mới.</li>
+                            <li>Tham gia cộng đồng học viên & chuyên gia, nơi chia sẻ cơ hội việc làm, dự án và network chất
+                                lượng.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-lg-4 col-xl-3 mb-4">
+                    <div class="shadow-sm rounded-5 p-sm-4 p-md-4 p-lg-5 height-100">
+                        <p class="fs-2 fw-bold fst-italic">7. Phương pháp học linh hoạt, dễ theo</p>
+                        <ul class="fst-italic fs-3">
+                            <li>Lịch học tùy chọn theo thời gian cá nhân (buổi tối, cuối tuần...).</li>
+                            <li>Có thể học trực tuyến 1:1 qua Zoom hoặc trực tiếp (nếu ở cùng khu vực).</li>
+                            <li>Tài liệu học & ghi hình buổi học được lưu trữ đầy đủ để xem lại.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-lg-4 col-xl-3 mb-4">
+                    <div class="shadow-sm rounded-5 p-sm-4 p-md-4 p-lg-5 height-100">
+                        <p class="fs-2 fw-bold fst-italic">8. Cam kết kết quả rõ ràng</p>
+                        <ul class="fst-italic fs-3">
+                            <li>Mỗi học viên đều có mục tiêu đo lường được ngay từ đầu (ví dụ: tăng doanh số, xây dựng chiến
+                                dịch, tối ưu funnel...).</li>
+                            <li>Coach đồng hành đến khi học viên đạt kết quả mong muốn.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div id="check-popup" class="popup">
-        <div class="popup-content">
-            <h3><strong>Đang kiểm tra thanh toán... </strong></h3>
 
+        <div class="d-flex justify-content-center">
+            <i
+                class="bi bi-arrow-down text-center mt-5 fs-custom-2 shadow-sm px-3 pt-5 rounded-5 text-black-50 btn scroll-btn"></i>
         </div>
-    </div>
-@endsection
 
-@section('scripts')
-    <script>
-        var clickb = false;
-        var checkBien = false;
-        let clickThanhtoan = document.
-        querySelector('button.btn.btn-success.btn-sm.btn-thanh-toan');
-        clickThanhtoan.onclick = function() {
-            document.getElementById("check-popup").style.display = "flex";
-            clickb = true;
-        }
-        let checkpaidd = setInterval(() => {
-            checkPaid({{ $order->total - $order->discount }}, "{{ preg_replace('/[^a-zA-Z0-9]/', '', preg_replace('/@.*/', '', $student->email))  }}{{ $order->id }}");
-
-        }, 2000);
-        async function checkPaid(price, content) {
-
-            try {
-                const response = await fetch(
-                    'https://script.google.com/macros/s/AKfycbw7di2IkMECJx2aYSN6lBtAyIX5bU44PeCWc56UBuDdNoiIbRvlgauTZWLm4AX2VpBYmA/exec'
-                );
-                const data = await response.json();
-                //  console.log(data);
-                data.data.forEach(item => {
-                    
-                    // const lastPaid = data.data[data.data.length - 1];
-                    lastPrice = item["Giá trị"];
-                    lastContent = item["Mô tả"];
-                    // console.log(lastContent.includes(content));
-                    if (lastPrice >= price && lastContent.toLowerCase().includes(content.toLowerCase())) {
-                        // console.log("Thanh toán thành công");
-                        checkBien = true;
-                        clearInterval(checkpaidd); // Dừng interval
-                        document.getElementById("check-popup").style.display = "none"; // Ẩn popup
-
-                        document.getElementById("payment-popup").style.display = "flex"; // Hiện popup
-                        let timeLeft = 2; // Số giây đếm ngược
-                        let countdownElement = document.getElementById("timer");
-
-                        let countdownInterval = setInterval(() => {
-                            timeLeft--; // Giảm thời gian còn lại
-                            countdownElement.textContent = timeLeft; // Cập nhật giao diện
-
-                            if (timeLeft <= 0) { // Khi đếm ngược về 0
-
-                                async function fetchData() {
-
-                                    try {
-
-                                        addToCart({{ $order->id }});
-                                        window.location.reload();
-                                        let response2 = await fetch(
-                                            "/tai-khoan/thanh-toan-thanh-cong");
-
-                                    } catch (error) {
-                                        console.error("Lỗi khi gọi API:", error);
-                                    }
-                                }
-
-                                fetchData();
-                                clearInterval(countdownInterval); // Dừng bộ đếm
-
-                                window.location.href =
-                                "/khoa-hoc"; // Chuyển hướng đến trang khóa học
-                            }
-                        }, 1000); // Cập nhật mỗi giây
-                    }
+        <!-- Cam nhan hoc vien -->
+        <div class="container mt-6 overflow-hidden">
+            <div class="row gx-5 justify-content-between d-none">
+                <div class="col-lg-4 d-sm-none d-lg-block grey-bg"></div>
+                <div
+                    class="col-sm-12 col-lg-4 fs-custom-3 text-center fw-bold d-flex align-items-center justify-content-center">
+                    Cảm nhận học viên
+                </div>
+                <div class="col-lg-4 d-sm-none d-lg-block grey-bg"></div>
+            </div>
+            <div class="d-flex flex-nowrap w-100">
+                <div class="flex-grow-1 d-sm-none d-lg-block grey-bg me-5"> </div>
+                <div class="fs-custom-3 text-center fw-bold d-flex align-items-center justify-content-center mx-auto">
+                    Cảm nhận học viên
+                </div>
+                <div class="flex-grow-1 d-sm-none d-lg-block grey-bg ms-5"> </div>
+            </div>
 
 
-                });
+            <div class="row mt-6 justify-content-center">
+                <div class="col-sm-12 col-lg-4 mb-4">
+                    <div class="shadow-sm rounded-5 p-sm-2 pt-sm-4 p-md-4 p-xl-5 d-flex flex-wrap">
+                        <div class="col-sm-12 col-lg-3 col-xxl-2 ps-0 pe-3">
+                            <img class="rounded-circle w-100 d-none d-lg-block" src="/om-front/img/youtube-icon.png"
+                                alt="" width="" height="">
+                            <div class="d-flex justify-content-center mb-md-2 mb-lg-4 d-block d-lg-none">
+                                <img class="rounded-circle" src="/om-front/img/youtube-icon.png" alt=""
+                                    width="90px" height="90px">
+                            </div>
 
-                if (!checkBien) {
+                        </div>
+                        <div class="col-sm-12 col-lg-9 col-xxl-10">
+                            <p class="fs-2 fw-bold fst-italic mb-0">Minh Hiếu</p>
+                            <p class="fs-3 fst-italic">Founder Organic Marketing & Hienu</p>
+                            <div>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                            </div>
+                            <p class="fs-3 fst-italic mt-3">
+                                Trong khóa học Xây Dựng Thương hiệu cá nhân này mình sẽ cho các bạn 1 bức tranh. 1 cách tư
+                                duy tổng thể và logic về chiến lược thương hiệu cá nhân. Từ đó định hình ra được phong cách
+                                và chiến lược cần phải đi cho mỗi người.</p>
+                        </div>
 
-                    if (clickb) {
+                    </div>
+                </div>
 
-                        document.getElementById("check-popup").style.display = "none"; // Ẩn popup
-                        document.getElementById("fail-popup").style.display = "flex";
-                        let timeLeft2 = 3; // Số giây đếm ngược
-                        let countdownElement2 = document.getElementById("timer");
+                <div class="col-sm-12 col-lg-4 mb-4">
+                    <div class="shadow-sm rounded-5 p-sm-2 pt-sm-4 p-md-4 p-xl-5 d-flex flex-wrap">
+                        <div class="col-sm-12 col-lg-3 col-xxl-2 ps-0 pe-3">
+                            <img class="rounded-circle w-100 d-none d-lg-block" src="/om-front/img/youtube-icon.png"
+                                alt="" width="" height="">
+                            <div class="d-flex justify-content-center mb-md-2 mb-lg-4 d-block d-lg-none">
+                                <img class="rounded-circle" src="/om-front/img/youtube-icon.png" alt=""
+                                    width="90px" height="90px">
+                            </div>
 
-                        let countdownInterval2 = setInterval(() => {
-                            timeLeft2--; // Giảm thời gian còn lại
-                            countdownElement2.textContent = timeLeft2; // Cập nhật giao diện
+                        </div>
+                        <div class="col-sm-12 col-lg-9 col-xxl-10">
+                            <p class="fs-2 fw-bold fst-italic mb-0">Minh Hiếu</p>
+                            <p class="fs-3 fst-italic">Founder Organic Marketing & Hienu</p>
+                            <div>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                            </div>
+                            <p class="fs-3 fst-italic mt-3">
+                                Trong khóa học Xây Dựng Thương hiệu cá nhân này mình sẽ cho các bạn 1 bức tranh. 1 cách tư
+                                duy tổng thể và logic về chiến lược thương hiệu cá nhân. Từ đó định hình ra được phong cách
+                                và chiến lược cần phải đi cho mỗi người.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-lg-4 mb-4">
+                    <div class="shadow-sm rounded-5 p-sm-2 pt-sm-4 p-md-4 p-xl-5 d-flex flex-wrap">
+                        <div class="col-sm-12 col-lg-3 col-xxl-2 ps-0 pe-3">
+                            <img class="rounded-circle w-100 d-none d-lg-block" src="/om-front/img/youtube-icon.png"
+                                alt="" width="" height="">
+                            <div class="d-flex justify-content-center mb-md-2 mb-lg-4 d-block d-lg-none">
+                                <img class="rounded-circle" src="/om-front/img/youtube-icon.png" alt=""
+                                    width="90px" height="90px">
+                            </div>
+
+                        </div>
+                        <div class="col-sm-12 col-lg-9 col-xxl-10">
+                            <p class="fs-2 fw-bold fst-italic mb-0">Minh Hiếu</p>
+                            <p class="fs-3 fst-italic">Founder Organic Marketing & Hienu</p>
+                            <div>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                            </div>
+                            <p class="fs-3 fst-italic mt-3">
+                                Trong khóa học Xây Dựng Thương hiệu cá nhân này mình sẽ cho các bạn 1 bức tranh. 1 cách tư
+                                duy tổng thể và logic về chiến lược thương hiệu cá nhân. Từ đó định hình ra được phong cách
+                                và chiến lược cần phải đi cho mỗi người.</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-lg-4 mb-4 d-none">
+                    <div class="shadow-sm rounded-5 p-5 height-100 d-flex">
+                        <div class="col-2">
+                            <img class="rounded-circle me-3" src="/om-front/img/youtube-icon.png" alt=""
+                                width="80" height="80">
+                        </div>
+                        <div class="col-10">
+                            <p class="fs-2 fw-bold fst-italic mb-0">Minh Hiếu</p>
+                            <p class="fs-3 fst-italic">Founder Organic Marketing & Hienu</p>
+                            <div>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                                <span class="material-symbols-outlined fs-3" style="font-variation-settings:'FILL' 1">
+                                    favorite
+                                </span>
+                            </div>
+                            <p class="fs-3 fst-italic mt-3">
+                                Trong khóa học Xây Dựng Thương hiệu cá nhân này mình sẽ cho các bạn 1 bức tranh. 1 cách tư
+                                duy tổng thể và logic về chiến lược thương hiệu cá nhân. Từ đó định hình ra được phong cách
+                                và chiến lược cần phải đi cho mỗi người.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <i
+                class="bi bi-arrow-down text-center mt-5 fs-custom-2 shadow-sm px-3 pt-5 rounded-5 text-black-50 btn scroll-btn"></i>
+        </div>
+
+        <!-- Bang gia coaching -->
+        <div class="container mt-6 overflow-hidden">
+            <div class="d-flex flex-nowrap w-100">
+                <div class="flex-grow-1 d-sm-none d-lg-block grey-bg me-5"> </div>
+                <div class="fs-custom-3 text-center fw-bold d-flex align-items-center justify-content-center mx-auto">
+                    Lộ trình học Coaching
+                </div>
+                <div class="flex-grow-1 d-sm-none d-lg-block grey-bg ms-5"> </div>
+            </div>
+
+            <div class="row mt-6 justify-content-center">
+                <div class="col-sm-12 col-lg-4 mb-4">
+                    <div class="shadow-sm rounded-5 p-5 height-100 d-flex flex-column">
+                        <p class="fs-1 fw-bold">Chương trình Coaching Buổi Lẻ Marketing & Sales 1:1</p>
+                        <p class="fs-4 fst-italic mt-5">Mỗi buổi coaching kéo dài 60–90 phút, học viên sẽ được:</p>
+                        <ul class="fst-italic fs-4">
+                            <li>Làm việc trực tiếp 1:1 với chuyên gia,</li>
+                            <li>Giải quyết (hỏi đáp) một vấn đề cụ thể đang gặp phải trong công việc hoặc dự án.</li>
+                            <li>Nhận hướng dẫn – phản hồi – kế hoạch hành động chi tiết sau buổi học.</li>
+                        </ul>
+                        <p class="fs-4 fst-italic mt-5">Mỗi buổi coaching kéo dài 60–90 phút, học viên sẽ được:</p>
+                        <ul class="fst-italic fs-4">
+                            <li>Làm việc trực tiếp 1:1 với chuyên gia,</li>
+                            <li>Giải quyết (hỏi đáp) một vấn đề cụ thể đang gặp phải trong công việc hoặc dự án.</li>
+                            <li>Nhận hướng dẫn – phản hồi – kế hoạch hành động chi tiết sau buổi học.</li>
+                        </ul>
+                        <p class="fs-4 fw-bold fst-italic mt-5">Chi phí: 500.000 VNĐ / buổi</p>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 col-lg-4 mb-4">
+                    <div class="shadow-sm rounded-5 p-5 height-100 d-flex flex-column">
+                        <p class="fs-1 fw-bold">Chương Trình Coaching Marketing & Sales Theo Lộ Trình Cá Nhân Hóa</p>
+                        <p class="fs-4 fst-italic">Cấu trúc lộ trình học tùy vào mục tiêu của học viên. Mỗi học viên được
+                            thiết kế lộ trình học riêng, phù hợp với mục tiêu nghề nghiệp, năng lực hiện tại và lĩnh vực
+                            đang hoạt động.</p>
+                        <p class="fs-4 fst-italic mt-5">Thời gian và hình thức học tương tự buổi lẻ. Học viên sẽ được:</p>
+                        <ul class="fst-italic fs-4">
+                            <li>Giúp học viên hiểu bản chất Marketing & Sales thay vì chỉ học mẹo.</li>
+                            <li>Xây dựng tư duy chiến lược và kỹ năng triển khai thực tế.</li>
+                            <li>Có thể vận hành chiến dịch Marketing hoặc quy trình bán hàng hoàn chỉnh sau khi hoàn thành
+                                chương trình.</li>
+                        </ul>
+
+                        <p class="fs-4 fw-bold fst-italic mt-auto">Chi phí: 350.000 VNĐ / buổi</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-center">
+            <i
+                class="bi bi-arrow-down text-center mt-5 fs-custom-2 shadow-sm px-3 pt-5 rounded-5 text-black-50 btn scroll-btn"></i>
+        </div>
+
+        <!-- Bat dau thoi nao -->
+        <div class="container mt-6 overflow-hidden">
+
+            <div class="d-flex flex-nowrap w-100">
+                <div class="flex-grow-1 d-sm-none d-lg-block grey-bg me-5"> </div>
+                <div class="fs-custom-3 text-center fw-bold d-flex align-items-center justify-content-center mx-auto">
+                    Bắt đầu thôi nào!
+                </div>
+                <div class="flex-grow-1 d-sm-none d-lg-block grey-bg ms-5"> </div>
+            </div>
+
+            <div class="row justify-content-center mt-6">
+                <div class="col-lg-6 mb-5">
+                    <div
+                        class="custom-bg-4 p-5 d-flex justify-content-center flex-column rounded-5 form-2-container shadow-sm">
+                        <p class="text-center fs-1 fw-bold">Đăng ký khóa học<br class="d-none d-md-block"> Coaching 1 kèm
+                            1</p>
+                        <div class="shadow-sm rounded-pill d-flex justify-content-center p-1 ms-auto me-auto">
+                            <a class="btn btn-primary me-2 p-1 px-3 fs-4 fw-bold rounded-4 rounded-pill" href="#"
+                                role="button">Buổi lẻ</a>
+                            <a class="btn p-1 px-3 fs-4 fw-bold rounded-4" href="#" role="button">Lộ trình</a>
+                        </div>
+                        <p class="text-center fs-2 fw-bolder mt-4">Thông tin của bạn</p>
+                       @if(session('coaching_success'))
+                            <div class="alert alert-success text-center" role="alert">
+                                {{ session('coaching_success') }}
+                            </div>
+                        @elseif(session('coaching_error'))
+                            <div class="alert alert-danger text-center" role="alert">
+                                {{ session('coaching_error') }}
+                            </div>
+                        @endif
+
+                        <form class="form-2 ms-auto me-auto" method="post" action="{{ route('student.coaching.submit') }}">
+                            @csrf
+                            <input type="hidden" name="plan_type" id="plan_type" value="{{ old('plan_type', 'buoi_le') }}">
+
+                            <div class="mb-3">
+                                <input name="name" type="text" class="form-control p-2 shadow-sm rounded-4 fs-4 ps-3"
+                                    value="{{ old('name') }}" placeholder="Tên của bạn" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <input name="phone" type="text" class="form-control p-2 shadow-sm rounded-4 fs-4 ps-3"
+                                    value="{{ old('phone') }}" placeholder="Số điện thoại của bạn" required>
+                            </div>
+                            <div class="mb-3">
+                                <input name="email" type="email" class="form-control p-2 shadow-sm rounded-4 fs-4 ps-3"
+                                    value="{{ old('email') }}" placeholder="Email" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <textarea name="message" placeholder="Nội dung bạn muốn đào tạo" required
+                                    class="w-100 p-2 bg-transparent border-0 shadow-sm rounded-4 fs-4 ps-3 ">{{ old('message') }}</textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 fw-bold rounded-4 fs-4">Đăng ký
+                                Coaching</button>
+                        </form>
+
+                        <p class="text-center fs-5 mt-4 fst-italic">SDT | Zalo - 082.688.6868 - Minh Hiếu</p>
+                    </div>
+                </div>
+            </div>
 
 
-                            if (timeLeft2 <= 0) { // Khi đếm ngược về 0
-                                clearInterval(countdownInterval2); // Dừng bộ đếm
-
-                                location.reload();
-                            } else {
-                                return false;
-                            }
-
-                        }, 1000);
-                    } else {
-                        return false;
-                    }
-                }
-
-            } catch {
-                console.error("Lỗi");
-            }
-        }
+            <div class="container mt-6">
 
 
-        function addToCart(param) {
+            </div>
+        </div>
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const planButtons = document.querySelectorAll('.plan-btn');
+        const planInput = document.getElementById('plan_type');
 
-            let cartFlash = JSON.parse(getCookie('cartFlash')) || []; // Lấy giỏ hàng từ cookie (nếu có)
+        planButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                planButtons.forEach(b => b.classList.remove('btn-primary', 'active'));
+                planButtons.forEach(b => b.classList.add('btn-light'));
+                btn.classList.add('btn-primary', 'active');
+                btn.classList.remove('btn-light');
+                planInput.value = btn.dataset.plan;
+            });
+        });
+    });
+</script>
+@endpush
 
-            if (!cartFlash.includes(param)) {
-                cartFlash.push(param);
-            }
-
-            setCookie('cartFlash', JSON.stringify(cartFlash), 1); // Lưu cookie trong 1 ngày
-            //    alert(JSON.stringify(cartFlash));
-        }
-
-        // Hàm đặt cookie
-        function setCookie(name, value, days) {
-            let expires = "";
-            if (days) {
-                let date = new Date();
-                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                expires = "; expires=" + date.toUTCString();
-            }
-            document.cookie = name + "=" + value + "; path=/" + expires;
-        }
-
-        // Hàm lấy cookie
-        function getCookie(name) {
-            let nameEQ = name + "=";
-            let ca = document.cookie.split(';');
-            for (let i = 0; i < ca.length; i++) {
-                let c = ca[i].trim();
-                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-            }
-            return null;
-        }
-    </script>
 @endsection

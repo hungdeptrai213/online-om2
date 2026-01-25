@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Course;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -140,6 +141,29 @@ class HomeController extends Controller
     public function coaching()
     {
         return view('student.coaching');
+    }
+
+    public function submitCoaching(Request $request)
+    {
+        $data = $request->validate([
+            'plan_type' => ['required', 'in:buoi_le,lo_trinh'],
+            'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:50'],
+            'email' => ['required', 'email', 'max:255'],
+            'message' => ['required', 'string', 'max:2000'],
+        ]);
+
+        try {
+            Mail::send('emails.coaching-request', ['data' => $data], function ($m) use ($data) {
+                $m->to('ilovebesun1996@gmail.com')
+                    ->subject('Đăng ký Coaching 1 kèm 1 - ' . $data['name']);
+            });
+
+            return back()->with('coaching_success', 'Gửi đăng ký thành công. Chúng tôi sẽ liên hệ sớm nhất!');
+        } catch (\Throwable $e) {
+            report($e);
+            return back()->withInput()->with('coaching_error', 'Gửi đăng ký thất bại, vui lòng thử lại sau.');
+        }
     }
 
     public function schedule()

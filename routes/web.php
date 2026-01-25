@@ -18,6 +18,7 @@ use App\Http\Controllers\Student\CommentController;
 
 Route::get('/', [HomeController::class, 'index'])->name('student.home');
 Route::get('/coaching', [HomeController::class, 'coaching'])->name('student.coaching');
+Route::post('/coaching', [HomeController::class, 'submitCoaching'])->name('student.coaching.submit');
 Route::get('/lich-hoc', [HomeController::class, 'schedule'])->name('student.schedule');
 Route::get('/tai-lieu', [HomeController::class, 'materials'])->name('student.materials');
 Route::get('/goi-doanh-nghiep', [HomeController::class, 'enterprise'])->name('student.enterprise');
