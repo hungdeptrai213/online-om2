@@ -426,10 +426,13 @@
                     class="custom-bg-4 p-5 d-flex justify-content-center flex-column rounded-5 form-2-container shadow-sm">
                     <p class="text-center fs-1 fw-bold">Đăng ký khóa học<br class="d-none d-md-block"> Coaching 1 kèm
                         1</p>
-                    <div class="shadow-sm rounded-pill d-flex justify-content-center p-1 ms-auto me-auto">
-                        <a class="btn btn-primary me-2 p-1 px-3 fs-4 fw-bold rounded-4 rounded-pill" href="#"
-                            role="button">Buổi lẻ</a>
-                        <a class="btn p-1 px-3 fs-4 fw-bold rounded-4" href="#" role="button">Lộ trình</a>
+                    <div class="shadow-sm rounded-pill d-flex justify-content-center p-1 ms-auto me-auto ">
+                        <button type="button" class="btn btn-primary me-2 p-1 px-3 fs-4 fw-bold rounded-4 rounded-pill plan-btn active" data-plan="buoi_le">
+                            Buổi lẻ
+                        </button>
+                        <button type="button" class="btn btn-light p-1 px-3 fs-4 fw-bold rounded-4 plan-btn" data-plan="lo_trinh">
+                            Lộ trình
+                        </button>
                     </div>
                     <p class="text-center fs-2 fw-bolder mt-4">Thông tin của bạn</p>
                     <?php if(session('coaching_success')): ?>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Course;
+use App\Models\FormSubmission;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -154,6 +155,14 @@ class HomeController extends Controller
         ]);
 
         try {
+            FormSubmission::create([
+                'form_type' => 'coaching',
+                'plan_type' => $data['plan_type'],
+                'name' => $data['name'],
+                'phone' => $data['phone'],
+                'email' => $data['email'],
+                'message' => $data['message'],
+            ]);
             Mail::send('emails.coaching-request', ['data' => $data], function ($m) use ($data) {
                 $m->to('ilovebesun1996@gmail.com')
                     ->subject('Đăng ký Coaching 1 kèm 1 - ' . $data['name']);
@@ -179,6 +188,35 @@ class HomeController extends Controller
     public function enterprise()
     {
         return view('student.enterprise');
+    }
+
+    public function submitEnterprise(Request $request)
+    {
+        $data = $request->validate([
+            'company' => ['required', 'string', 'max:255'],
+            'contact_name' => ['required', 'string', 'max:255'],
+            'contact_phone' => ['required', 'string', 'max:50'],
+            'email' => ['required', 'email', 'max:255'],
+            'employee_count' => ['required', 'string', 'max:50'],
+            'message' => ['required', 'string', 'max:2000'],
+        ]);
+
+        try {
+            FormSubmission::create([
+                'form_type' => 'enterprise',
+                'company' => $data['company'],
+                'contact_name' => $data['contact_name'],
+                'contact_phone' => $data['contact_phone'],
+                'email' => $data['email'],
+                'employee_count' => $data['employee_count'],
+                'message' => $data['message'],
+            ]);
+
+            return back()->with('enterprise_success', 'Chúng tôi đã ghi nhận yêu cầu, sẽ liên hệ bạn sớm nhất.');
+        } catch (\Throwable $e) {
+            report($e);
+            return back()->withInput()->with('enterprise_error', 'Gửi đăng ký thất bại, vui lòng thử lại sau.');
+        }
     }
 
     public function courseDetail(Request $request, $courseId = null)

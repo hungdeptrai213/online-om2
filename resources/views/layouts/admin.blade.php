@@ -301,6 +301,7 @@
         @php($userActive = request()->routeIs('admin.users.*'))
         @php($studentActive = request()->routeIs('admin.students.*'))
         @php($categoryActive = request()->routeIs('admin.categories.*'))
+        @php($formActive = request()->routeIs('admin.forms.*'))
         @php($commentActive = request()->routeIs('admin.comments.*'))
         <div class="nav-group">
             <div class="nav-item active">
@@ -352,10 +353,10 @@
                 <span class="nav-label">Khóa học</span>
                 <span class="nav-badge">Chương/Bài</span>
             </a>
-            <div class="nav-item">
+            <a class="nav-item {{ $formActive ? 'active' : '' }}" href="{{ route('admin.forms.index') }}">
                 <i class="fa-solid fa-clipboard-list"></i>
                 <span class="nav-label">Form đăng ký</span>
-            </div>
+            </a>
             <div class="nav-item">
                 <i class="fa-solid fa-calendar-days"></i>
                 <span class="nav-label">Lịch học</span>

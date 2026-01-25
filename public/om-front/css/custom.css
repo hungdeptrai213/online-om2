@@ -1244,3 +1244,14 @@ textarea#commentContent {
     border: 1px solid #ccc;
     padding: 15px;
 }
+
+
+button.btn.btn-primary.me-2.p-1.px-3.fs-4.fw-bold.rounded-4.rounded-pill.plan-btn.active, button.btn.p-1.px-3.fs-4.fw-bold.rounded-4.plan-btn.btn-primary.active {
+    background-color: #25624f;
+    border-color: #25624f;
+    border-radius: 30px !important;
+}
+
+button.btn.p-1.px-3.fs-4.fw-bold.rounded-4.plan-btn.btn-light {
+ border-radius: 30px !important;
+}

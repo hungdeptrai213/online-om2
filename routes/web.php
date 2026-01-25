@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\StudentController as AdminStudentController;
 use App\Http\Controllers\Admin\CourseCategoryController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\CourseContentController;
+use App\Http\Controllers\Admin\FormSubmissionController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\StudentCourseController as AdminStudentCourseController;
 use App\Http\Controllers\Admin\CommentController as AdminCommentController;
@@ -22,6 +23,7 @@ Route::post('/coaching', [HomeController::class, 'submitCoaching'])->name('stude
 Route::get('/lich-hoc', [HomeController::class, 'schedule'])->name('student.schedule');
 Route::get('/tai-lieu', [HomeController::class, 'materials'])->name('student.materials');
 Route::get('/goi-doanh-nghiep', [HomeController::class, 'enterprise'])->name('student.enterprise');
+Route::post('/goi-doanh-nghiep', [HomeController::class, 'submitEnterprise'])->name('student.enterprise.submit');
 Route::get('/khoa-hoc/chi-tiet', [HomeController::class, 'courseDetail'])->name('student.course-detail');
 Route::middleware('auth:student')->group(function () {
     Route::get('/gio-hang', [HomeController::class, 'cart'])->name('student.cart');
@@ -75,5 +77,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('students/{student}/courses-json', [AdminStudentCourseController::class, 'list'])->name('students.courses.list');
         Route::post('students/{student}/courses-sync', [AdminStudentCourseController::class, 'sync'])->name('students.courses.sync');
         Route::get('comments', [AdminCommentController::class, 'index'])->name('comments.index');
+        Route::get('forms', [FormSubmissionController::class, 'index'])->name('forms.index');
     });
 });
