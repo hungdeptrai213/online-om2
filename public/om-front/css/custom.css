@@ -1273,8 +1273,15 @@ button.btn.p-1.px-3.fs-4.fw-bold.rounded-4.plan-btn.btn-light {
 .modal-content.rounded-5.shadow-sm {
     padding: 20px;
 }
-@media (max-width: 992px) {
-    .teach-modal .modal-dialog {
-        max-width: 90%;
-    }
+
+
+
+.col-lg-3.img-widget img {
+    border: 1px solid #afafaf;
+}
+
+form#documentPurchaseForm input, form#documentPurchaseForm textarea{
+    border: 1px solid #c4c4c4;
+    padding: 5px 5px 5px 19px;
+    border-radius: 10px;
 }

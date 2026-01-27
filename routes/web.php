@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Student\DocumentPurchaseController;
 use App\Http\Controllers\Student\HomeController;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Student\AuthController as StudentAuthController;
@@ -14,6 +15,9 @@ use App\Http\Controllers\Admin\FormSubmissionController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\StudentCourseController as AdminStudentCourseController;
 use App\Http\Controllers\Admin\CommentController as AdminCommentController;
+use App\Http\Controllers\Admin\DocumentController;
+use App\Http\Controllers\Admin\DocumentTopicController;
+use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Student\CheckoutController;
 use App\Http\Controllers\Student\CommentController;
 
@@ -22,13 +26,15 @@ Route::get('/coaching', [HomeController::class, 'coaching'])->name('student.coac
 Route::post('/coaching', [HomeController::class, 'submitCoaching'])->name('student.coaching.submit');
 Route::get('/lich-hoc', [HomeController::class, 'schedule'])->name('student.schedule');
 Route::get('/tai-lieu', [HomeController::class, 'materials'])->name('student.materials');
+Route::get('/tai-lieu/{document}/gio-hang', [DocumentPurchaseController::class, 'show'])->name('student.documents.cart');
+Route::post('/tai-lieu/{document}/gio-hang/xac-nhan', [DocumentPurchaseController::class, 'confirm'])->name('student.documents.cart.confirm');
 Route::get('/goi-doanh-nghiep', [HomeController::class, 'enterprise'])->name('student.enterprise');
 Route::post('/goi-doanh-nghiep', [HomeController::class, 'submitEnterprise'])->name('student.enterprise.submit');
 Route::post('/teach', [HomeController::class, 'submitTeach'])->name('student.teach.submit');
 Route::get('/khoa-hoc/chi-tiet', [HomeController::class, 'courseDetail'])->name('student.course-detail');
-Route::middleware('auth:student')->group(function () {
-    Route::get('/gio-hang', [HomeController::class, 'cart'])->name('student.cart');
-    Route::post('/gio-hang/xac-nhan', [CheckoutController::class, 'confirm'])->name('student.cart.confirm');
+    Route::middleware('auth:student')->group(function () {
+        Route::get('/gio-hang', [HomeController::class, 'cart'])->name('student.cart');
+        Route::post('/gio-hang/xac-nhan', [CheckoutController::class, 'confirm'])->name('student.cart.confirm');
     Route::get('/ho-so', [HomeController::class, 'profile'])->name('student.profile');
     Route::get('/khoa-hoc-cua-toi', [HomeController::class, 'myCourses'])->name('student.my-courses');
     Route::post('/ho-so', [HomeController::class, 'updateProfile'])->name('student.profile.update');
@@ -66,6 +72,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('students', AdminStudentController::class)->names('students');
         Route::resource('categories', CourseCategoryController::class)->names('categories');
         Route::resource('courses', AdminCourseController::class)->names('courses');
+        Route::resource('documents', DocumentController::class)->names('documents');
+        Route::resource('document-topics', DocumentTopicController::class)->names('document-topics');
+        Route::resource('schedules', ScheduleController::class)->names('schedules');
         Route::get('courses/{course}/content', [CourseContentController::class, 'index'])->name('courses.content');
         Route::post('courses/{course}/chapters', [CourseContentController::class, 'storeChapter'])->name('courses.chapters.store');
         Route::post('courses/{course}/chapters/{chapter}/lessons', [CourseContentController::class, 'storeLesson'])->name('courses.lessons.store');

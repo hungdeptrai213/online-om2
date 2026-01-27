@@ -7,7 +7,7 @@
         <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px;">
             <div>
                 <h2 style="margin:0;">Form đăng ký</h2>
-                <div class="muted">Dữ liệu coaching & doanh nghiệp</div>
+                <div class="muted">Dữ liệu coaching, doanh nghiệp & mua tài liệu</div>
             </div>
         </div>
 
@@ -19,6 +19,7 @@
                 <option value="coaching" @selected(($formType ?? '') === 'coaching')>Coaching 1:1</option>
                 <option value="enterprise" @selected(($formType ?? '') === 'enterprise')>Doanh nghiệp</option>
                 <option value="teach" @selected(($formType ?? '') === 'teach')>Dạy trên OM Edu</option>
+                <option value="document_purchase" @selected(($formType ?? '') === 'document_purchase')>Mua tài liệu</option>
             </select>
             <button type="submit" class="btn-dark" style="padding:9px 14px;border-radius:6px;">Lọc</button>
             <a href="{{ route('admin.forms.index') }}" style="color:#1f2d3d;text-decoration:none;">Xóa lọc</a>
@@ -49,6 +50,12 @@
                                     @case('enterprise')
                                         Doanh nghiệp
                                         @break
+                                    @case('teach')
+                                        Dạy trên OM Edu
+                                        @break
+                                    @case('document_purchase')
+                                        Mua tài liệu
+                                        @break
                                     @default
                                         Dạy trên OM Edu
                                 @endswitch
@@ -66,14 +73,22 @@
                             </div>
                         </td>
                         <td style="padding:10px 12px;">
-                            @if($submission->form_type === 'enterprise')
-                                <div><strong>Công ty:</strong> {{ $submission->company ?? '—' }}</div>
-                                <div class="muted" style="font-size:13px;">{{ $submission->employee_count ? 'Nhân sự: ' . $submission->employee_count : '' }}</div>
-                            @elseif($submission->form_type === 'teach')
-                                <div><strong>Lĩnh vực:</strong> {{ $submission->field ?? '—' }}</div>
-                            @else
-                                <span class="muted">—</span>
-                            @endif
+                        @if($submission->form_type === 'enterprise')
+                            <div><strong>Công ty:</strong> {{ $submission->company ?? '—' }}</div>
+                            <div class="muted" style="font-size:13px;">{{ $submission->employee_count ? 'Nhân sự: ' . $submission->employee_count : '' }}</div>
+                        @elseif($submission->form_type === 'teach')
+                            <div><strong>Lĩnh vực:</strong> {{ $submission->field ?? '—' }}</div>
+                        @elseif($submission->form_type === 'document_purchase')
+                            <div><strong>Tài liệu:</strong> {{ $submission->document_title ?? '—' }}</div>
+                            <div class="muted" style="font-size:13px;">
+                                <strong>Giá:</strong> {{ $submission->document_price ? number_format($submission->document_price, 0, ',', '.') . ' VNĐ' : 'Miễn phí' }}
+                            </div>
+                            <div class="muted" style="font-size:13px;">
+                                <strong>Địa chỉ nhận:</strong> {{ $submission->address ?? '—' }}
+                            </div>
+                        @else
+                            <span class="muted">—</span>
+                        @endif
                         </td>
                         <td style="padding:10px 12px;max-width:360px;">
                             <div style="white-space:pre-line;">{{ $submission->message ?? $submission->field }}</div>

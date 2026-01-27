@@ -86,7 +86,7 @@
         @endif
 
         @if($showHomeSections)
-            @auth
+            @auth('student')
             <div class="row" style="margin-top:30px">
                 <p class="fs-1 mb-4 fw-bold">Thư viện - Khóa học của bạn</p>
                 @forelse($courses ?? [] as $course)
@@ -258,3 +258,4 @@
         @endif
     </div>
 @endsection
+

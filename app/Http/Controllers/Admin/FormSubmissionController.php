@@ -14,12 +14,16 @@ class FormSubmissionController extends Controller
 
         if ($search = trim((string) $request->get('q', ''))) {
             $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('company', 'like', "%{$search}%")
-                    ->orWhere('contact_name', 'like', "%{$search}%")
-                    ->orWhere('message', 'like', "%{$search}%")
-                    ->orWhere('field', 'like', "%{$search}%");
+            $q->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+                ->orWhere('company', 'like', "%{$search}%")
+                ->orWhere('contact_name', 'like', "%{$search}%")
+                ->orWhere('message', 'like', "%{$search}%")
+                ->orWhere('field', 'like', "%{$search}%")
+                ->orWhere('document_title', 'like', "%{$search}%")
+                ->orWhere('payment_note', 'like', "%{$search}%")
+                ->orWhere('address', 'like', "%{$search}%")
+                ->orWhere('notes', 'like', "%{$search}%");
             });
         }
 

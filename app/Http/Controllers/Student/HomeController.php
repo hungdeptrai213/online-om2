@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Course;
+use App\Models\ClassSchedule;
+use App\Models\Document;
+use App\Models\DocumentTopic;
 use App\Models\FormSubmission;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
@@ -177,12 +180,61 @@ class HomeController extends Controller
 
     public function schedule()
     {
-        return view('student.schedule');
+        $schedules = ClassSchedule::orderByDesc('start_date')
+            ->orderByDesc('id')
+            ->get();
+
+        return view('student.schedule', [
+            'schedules' => $schedules,
+        ]);
     }
 
-    public function materials()
+    public function materials(Request $request)
     {
-        return view('student.materials');
+        $topics = DocumentTopic::orderBy('name')->get();
+        $query = Document::with('topics')
+            ->orderByDesc('published_at')
+            ->orderByDesc('id');
+
+        $search = trim((string) $request->get('q', ''));
+        if ($search) {
+            $query->where('title', 'like', "%{$search}%");
+        }
+
+        $topicSlug = trim((string) $request->get('topic', ''));
+        $selectedTopic = null;
+        if ($topicSlug) {
+            $selectedTopic = DocumentTopic::where('slug', $topicSlug)->first();
+            if ($selectedTopic) {
+                $query->whereHas('topics', function ($q) use ($topicSlug) {
+                    $q->where('slug', $topicSlug);
+                });
+            }
+        }
+
+        $documents = $query->paginate(6)->withQueryString();
+        $student = auth('student')->user();
+        $purchasedDocumentIds = collect();
+
+        if ($student) {
+            $prefix = 'td' . $student->id;
+            $purchasedDocumentIds = FormSubmission::query()
+                ->where('form_type', 'document_purchase')
+                ->whereNotNull('document_id')
+                ->where('payment_note', 'like', "{$prefix}%")
+                ->pluck('document_id')
+                ->filter()
+                ->unique();
+        }
+
+        return view('student.materials', [
+            'documents' => $documents,
+            'topics' => $topics,
+            'selectedTopic' => $selectedTopic,
+            'searchTerm' => $search,
+            'topicSlug' => $topicSlug,
+            'purchasedDocumentIds' => $purchasedDocumentIds,
+        ]);
     }
 
     public function enterprise()

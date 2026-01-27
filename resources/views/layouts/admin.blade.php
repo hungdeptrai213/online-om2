@@ -293,16 +293,20 @@
 <body>
 <div class="layout">
     <aside class="sidebar">
-        <div class="brand">
+        <a href="/" class="brand">
             <div class="logo"><i class="fa-solid fa-gauge-high"></i></div>
             <span>OM E-LEARNING</span>
-        </div>
+        </a>
 
         @php($userActive = request()->routeIs('admin.users.*'))
         @php($studentActive = request()->routeIs('admin.students.*'))
         @php($categoryActive = request()->routeIs('admin.categories.*'))
         @php($formActive = request()->routeIs('admin.forms.*'))
+        @php($documentActive = request()->routeIs('admin.documents.*'))
+        @php($documentTopicActive = request()->routeIs('admin.document-topics.*'))
+        @php($documentGroupActive = $documentActive || $documentTopicActive)
         @php($commentActive = request()->routeIs('admin.comments.*'))
+        @php($scheduleActive = request()->routeIs('admin.schedules.*'))
         <div class="nav-group">
             <div class="nav-item active">
                 <i class="fa-solid fa-chart-pie"></i>
@@ -357,13 +361,22 @@
                 <i class="fa-solid fa-clipboard-list"></i>
                 <span class="nav-label">Form đăng ký</span>
             </a>
-            <div class="nav-item">
+            <a class="nav-item {{ $scheduleActive ? 'active' : '' }}" href="{{ route('admin.schedules.index') }}">
                 <i class="fa-solid fa-calendar-days"></i>
                 <span class="nav-label">Lịch học</span>
-            </div>
-            <div class="nav-item">
+            </a>
+            <div class="nav-item has-children {{ $documentGroupActive ? 'active' : 'collapsed' }}">
                 <i class="fa-solid fa-folder-open"></i>
                 <span class="nav-label">Tài liệu</span>
+                <i class="fa-solid fa-chevron-right chevron"></i>
+            </div>
+            <div class="nav-sub {{ $documentGroupActive ? '' : 'hide' }}">
+                <a class="{{ $documentActive ? 'active' : '' }}" href="{{ route('admin.documents.index') }}">
+                    <span class="triangle"></span> Danh sách tài liệu
+                </a>
+                <a class="{{ $documentTopicActive ? 'active' : '' }}" href="{{ route('admin.document-topics.index') }}">
+                    <span class="triangle"></span> Chủ đề tài liệu
+                </a>
             </div>
             <a class="nav-item {{ $commentActive ? 'active' : '' }}" href="{{ route('admin.comments.index') }}">
                 <i class="fa-solid fa-comments"></i>

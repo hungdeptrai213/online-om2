@@ -5,7 +5,7 @@
         <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px;">
             <div>
                 <h2 style="margin:0;">Form đăng ký</h2>
-                <div class="muted">Dữ liệu coaching & doanh nghiệp</div>
+                <div class="muted">Dữ liệu coaching, doanh nghiệp & mua tài liệu</div>
             </div>
         </div>
 
@@ -17,6 +17,7 @@
                 <option value="coaching" <?php if(($formType ?? '') === 'coaching'): echo 'selected'; endif; ?>>Coaching 1:1</option>
                 <option value="enterprise" <?php if(($formType ?? '') === 'enterprise'): echo 'selected'; endif; ?>>Doanh nghiệp</option>
                 <option value="teach" <?php if(($formType ?? '') === 'teach'): echo 'selected'; endif; ?>>Dạy trên OM Edu</option>
+                <option value="document_purchase" <?php if(($formType ?? '') === 'document_purchase'): echo 'selected'; endif; ?>>Mua tài liệu</option>
             </select>
             <button type="submit" class="btn-dark" style="padding:9px 14px;border-radius:6px;">Lọc</button>
             <a href="<?php echo e(route('admin.forms.index')); ?>" style="color:#1f2d3d;text-decoration:none;">Xóa lọc</a>
@@ -47,6 +48,12 @@
                                     <?php case ('enterprise'): ?>
                                         Doanh nghiệp
                                         <?php break; ?>
+                                    <?php case ('teach'): ?>
+                                        Dạy trên OM Edu
+                                        <?php break; ?>
+                                    <?php case ('document_purchase'): ?>
+                                        Mua tài liệu
+                                        <?php break; ?>
                                     <?php default: ?>
                                         Dạy trên OM Edu
                                 <?php endswitch; ?>
@@ -66,14 +73,24 @@
                             </div>
                         </td>
                         <td style="padding:10px 12px;">
-                            <?php if($submission->form_type === 'enterprise'): ?>
-                                <div><strong>Công ty:</strong> <?php echo e($submission->company ?? '—'); ?></div>
-                                <div class="muted" style="font-size:13px;"><?php echo e($submission->employee_count ? 'Nhân sự: ' . $submission->employee_count : ''); ?></div>
-                            <?php elseif($submission->form_type === 'teach'): ?>
-                                <div><strong>Lĩnh vực:</strong> <?php echo e($submission->field ?? '—'); ?></div>
-                            <?php else: ?>
-                                <span class="muted">—</span>
-                            <?php endif; ?>
+                        <?php if($submission->form_type === 'enterprise'): ?>
+                            <div><strong>Công ty:</strong> <?php echo e($submission->company ?? '—'); ?></div>
+                            <div class="muted" style="font-size:13px;"><?php echo e($submission->employee_count ? 'Nhân sự: ' . $submission->employee_count : ''); ?></div>
+                        <?php elseif($submission->form_type === 'teach'): ?>
+                            <div><strong>Lĩnh vực:</strong> <?php echo e($submission->field ?? '—'); ?></div>
+                        <?php elseif($submission->form_type === 'document_purchase'): ?>
+                            <div><strong>Tài liệu:</strong> <?php echo e($submission->document_title ?? '—'); ?></div>
+                            <div class="muted" style="font-size:13px;">
+                                <strong>Giá:</strong> <?php echo e($submission->document_price ? number_format($submission->document_price, 0, ',', '.') . ' VNĐ' : 'Miễn phí'); ?>
+
+                            </div>
+                            <div class="muted" style="font-size:13px;">
+                                <strong>Địa chỉ nhận:</strong> <?php echo e($submission->address ?? '—'); ?>
+
+                            </div>
+                        <?php else: ?>
+                            <span class="muted">—</span>
+                        <?php endif; ?>
                         </td>
                         <td style="padding:10px 12px;max-width:360px;">
                             <div style="white-space:pre-line;"><?php echo e($submission->message ?? $submission->field); ?></div>

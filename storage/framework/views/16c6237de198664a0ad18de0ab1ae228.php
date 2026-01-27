@@ -84,7 +84,7 @@
         <?php endif; ?>
 
         <?php if($showHomeSections): ?>
-            <?php if(auth()->guard()->check()): ?>
+            <?php if(auth()->guard('student')->check()): ?>
             <div class="row" style="margin-top:30px">
                 <p class="fs-1 mb-4 fw-bold">Thư viện - Khóa học của bạn</p>
                 <?php $__empty_1 = true; $__currentLoopData = $courses ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $course): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
@@ -256,5 +256,6 @@
         <?php endif; ?>
     </div>
 <?php $__env->stopSection(); ?>
+
 
 <?php echo $__env->make('student.layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\online-om\resources\views/student/home.blade.php ENDPATH**/ ?>

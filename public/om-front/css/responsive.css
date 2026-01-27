@@ -436,7 +436,7 @@
 
   .modal-dialog {
     /* margin-top: 10vh; */
-    max-width: 70%;
+    max-width: 40%;
     margin-right: auto;
     margin-left: auto;
   }
@@ -536,3 +536,9 @@
     }
 }
 
+
+@media (max-width: 992px) {
+    .teach-modal .modal-dialog {
+        max-width: 90%;
+    }
+}
