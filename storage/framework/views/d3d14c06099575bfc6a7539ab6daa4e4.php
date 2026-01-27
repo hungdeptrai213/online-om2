@@ -302,6 +302,7 @@
         <?php ($studentActive = request()->routeIs('admin.students.*')); ?>
         <?php ($categoryActive = request()->routeIs('admin.categories.*')); ?>
         <?php ($formActive = request()->routeIs('admin.forms.*')); ?>
+        <?php ($registrationActive = request()->routeIs('admin.registrations.*')); ?>
         <?php ($documentActive = request()->routeIs('admin.documents.*')); ?>
         <?php ($documentTopicActive = request()->routeIs('admin.document-topics.*')); ?>
         <?php ($documentGroupActive = $documentActive || $documentTopicActive); ?>
@@ -382,10 +383,10 @@
                 <i class="fa-solid fa-comments"></i>
                 <span class="nav-label">Bình luận</span>
             </a>
-            <div class="nav-item">
+            <a class="nav-item <?php echo e($registrationActive ? 'active' : ''); ?>" href="<?php echo e(route('admin.registrations.index')); ?>">
                 <i class="fa-solid fa-user-check"></i>
                 <span class="nav-label">Theo dõi đăng ký</span>
-            </div>
+            </a>
         </div>
 
         <div class="sidebar-footer">

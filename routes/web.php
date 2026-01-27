@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\StudentCourseController as AdminStudentCourseCont
 use App\Http\Controllers\Admin\CommentController as AdminCommentController;
 use App\Http\Controllers\Admin\DocumentController;
 use App\Http\Controllers\Admin\DocumentTopicController;
+use App\Http\Controllers\Admin\RegistrationController;
 use App\Http\Controllers\Admin\ScheduleController;
 use App\Http\Controllers\Student\CheckoutController;
 use App\Http\Controllers\Student\CommentController;
@@ -88,5 +89,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('students/{student}/courses-sync', [AdminStudentCourseController::class, 'sync'])->name('students.courses.sync');
         Route::get('comments', [AdminCommentController::class, 'index'])->name('comments.index');
         Route::get('forms', [FormSubmissionController::class, 'index'])->name('forms.index');
+        Route::get('registrations', [RegistrationController::class, 'index'])->name('registrations.index');
     });
 });
