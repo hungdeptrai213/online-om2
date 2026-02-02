@@ -9,6 +9,7 @@ use App\Models\ClassSchedule;
 use App\Models\Document;
 use App\Models\DocumentTopic;
 use App\Models\FormSubmission;
+use App\Models\Student;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -214,18 +215,7 @@ class HomeController extends Controller
 
         $documents = $query->paginate(6)->withQueryString();
         $student = auth('student')->user();
-        $purchasedDocumentIds = collect();
-
-        if ($student) {
-            $prefix = 'td' . $student->id;
-            $purchasedDocumentIds = FormSubmission::query()
-                ->where('form_type', 'document_purchase')
-                ->whereNotNull('document_id')
-                ->where('payment_note', 'like', "{$prefix}%")
-                ->pluck('document_id')
-                ->filter()
-                ->unique();
-        }
+        $purchasedDocumentIds = $this->getPurchasedDocumentIdsForStudent($student);
 
         return view('student.materials', [
             'documents' => $documents,
@@ -234,6 +224,22 @@ class HomeController extends Controller
             'searchTerm' => $search,
             'topicSlug' => $topicSlug,
             'purchasedDocumentIds' => $purchasedDocumentIds,
+        ]);
+    }
+
+    public function documentDetail(Document $document)
+    {
+        $document->load('topics');
+        $student = auth('student')->user();
+        $isPurchased = $this->getPurchasedDocumentIdsForStudent($student)->contains($document->id);
+        $pdfUrl = $this->resolveDocumentPdfUrl($document);
+        $originalLink = $this->resolveDocumentOriginalUrl($document);
+
+        return view('student.documents.show', [
+            'document' => $document,
+            'isPurchased' => $isPurchased,
+            'pdfUrl' => $pdfUrl,
+            'originalLink' => $originalLink,
         ]);
     }
 
@@ -254,9 +260,9 @@ class HomeController extends Controller
         ]);
 
         try {
-            FormSubmission::create([
-                'form_type' => 'enterprise',
-                'company' => $data['company'],
+        FormSubmission::create([
+            'form_type' => 'enterprise',
+            'company' => $data['company'],
                 'contact_name' => $data['contact_name'],
                 'contact_phone' => $data['contact_phone'],
                 'email' => $data['email'],
@@ -451,5 +457,58 @@ class HomeController extends Controller
             'nextLesson' => $nextLesson,
             'comments' => $comments,
         ]);
+    }
+
+    private function getPurchasedDocumentIdsForStudent(?Student $student): Collection
+    {
+        if (!$student) {
+            return collect();
+        }
+
+        $prefix = 'td' . $student->id;
+
+        return FormSubmission::query()
+            ->where('form_type', 'document_purchase')
+            ->whereNotNull('document_id')
+            ->where('payment_note', 'like', "{$prefix}%")
+            ->pluck('document_id')
+            ->filter()
+            ->unique()
+            ->values();
+    }
+
+    private function resolveDocumentPdfUrl(Document $document): ?string
+    {
+        $link = trim((string) $document->link);
+        if ($link === '') {
+            return null;
+        }
+
+        $isHttp = str_starts_with($link, 'http://') || str_starts_with($link, 'https://');
+        $resolved = $isHttp ? $link : asset($link);
+
+        if (str_contains($resolved, 'drive.google.com')) {
+            if (preg_match('#/d/([^/]+)#', $resolved, $matches)) {
+                return "https://drive.google.com/uc?export=download&id={$matches[1]}";
+            }
+
+            if (preg_match('/id=([^&]+)/', $resolved, $matches)) {
+                return "https://drive.google.com/uc?export=download&id={$matches[1]}";
+            }
+        }
+
+        return $resolved;
+    }
+
+    private function resolveDocumentOriginalUrl(Document $document): ?string
+    {
+        $link = trim((string) $document->link);
+        if ($link === '') {
+            return null;
+        }
+
+        return str_starts_with($link, 'http://') || str_starts_with($link, 'https://')
+            ? $link
+            : asset($link);
     }
 }

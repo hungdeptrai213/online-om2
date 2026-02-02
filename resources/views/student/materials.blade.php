@@ -43,12 +43,17 @@
                                 <img src="/om-front/img/Eyes Cartoon.png" alt="" width="30px" class="me-1 mb-1">
                                 Xem thêm
                             </a> --}}
-                                                    <p class="fs-3 fw-bold mb-0">{{ $document->title }}</p>
+                            @php
+                                $docLink = Str::startsWith($document->link, 'http') ? $document->link : asset($document->link);
+                            @endphp
+                            <a class="fs-3 fw-bold mb-0 text-decoration-none text-dark" href="{{ route('student.documents.show', ['document' => $document->id]) }}">
+                                {{ $document->title }}
+                            </a>
 
                             @if($document->price <= 0)
                                 <a style="margin-left:20px;" class="btn fs-4 fst-italic py-0 text-decoration-none download-trigger"
-                                   href="{{ $document->link }}"
-                                   data-download-link="{{ $document->link }}">
+                                   href="{{ $docLink }}"
+                                   data-download-link="{{ $docLink }}">
                                     <img src="/om-front/img/Download from the Cloud.png" alt="" width="30px" class="me-1">
                                     Tải xuống
                                 </a>

@@ -110,7 +110,7 @@
 
 <?php $__env->startPush('scripts'); ?>
 <div class="modal fade" id="paymentResultModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width: 50%; width: 90%;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 40%; width: 90%;">
         <div class="modal-content border-0">
             <div id="paymentResultBody" class="modal-body text-center text-white fw-bold fs-3 rounded-top">
                 <!-- message -->

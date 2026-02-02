@@ -15,6 +15,8 @@ class Document extends Model
         'link',
         'price',
         'published_at',
+        'description',
+        'thumbnail',
     ];
 
     protected $casts = [

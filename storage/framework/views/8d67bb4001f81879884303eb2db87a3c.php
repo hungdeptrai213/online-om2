@@ -39,12 +39,18 @@
                        
                         <div class="d-flex align-items-center gap-3 flex-wrap mb-2">
                             
-                                                    <p class="fs-3 fw-bold mb-0"><?php echo e($document->title); ?></p>
+                            <?php
+                                $docLink = Str::startsWith($document->link, 'http') ? $document->link : asset($document->link);
+                            ?>
+                            <a class="fs-3 fw-bold mb-0 text-decoration-none text-dark" href="<?php echo e(route('student.documents.show', ['document' => $document->id])); ?>">
+                                <?php echo e($document->title); ?>
+
+                            </a>
 
                             <?php if($document->price <= 0): ?>
                                 <a style="margin-left:20px;" class="btn fs-4 fst-italic py-0 text-decoration-none download-trigger"
-                                   href="<?php echo e($document->link); ?>"
-                                   data-download-link="<?php echo e($document->link); ?>">
+                                   href="<?php echo e($docLink); ?>"
+                                   data-download-link="<?php echo e($docLink); ?>">
                                     <img src="/om-front/img/Download from the Cloud.png" alt="" width="30px" class="me-1">
                                     Tải xuống
                                 </a>

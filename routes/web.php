@@ -27,8 +27,15 @@ Route::get('/coaching', [HomeController::class, 'coaching'])->name('student.coac
 Route::post('/coaching', [HomeController::class, 'submitCoaching'])->name('student.coaching.submit');
 Route::get('/lich-hoc', [HomeController::class, 'schedule'])->name('student.schedule');
 Route::get('/tai-lieu', [HomeController::class, 'materials'])->name('student.materials');
-Route::get('/tai-lieu/{document}/gio-hang', [DocumentPurchaseController::class, 'show'])->name('student.documents.cart');
-Route::post('/tai-lieu/{document}/gio-hang/xac-nhan', [DocumentPurchaseController::class, 'confirm'])->name('student.documents.cart.confirm');
+Route::get('/tai-lieu/{document}/gio-hang', [DocumentPurchaseController::class, 'show'])
+    ->name('student.documents.cart')
+    ->whereNumber('document');
+Route::post('/tai-lieu/{document}/gio-hang/xac-nhan', [DocumentPurchaseController::class, 'confirm'])
+    ->name('student.documents.cart.confirm')
+    ->whereNumber('document');
+Route::get('/tai-lieu/{document}', [HomeController::class, 'documentDetail'])
+    ->name('student.documents.show')
+    ->whereNumber('document');
 Route::get('/goi-doanh-nghiep', [HomeController::class, 'enterprise'])->name('student.enterprise');
 Route::post('/goi-doanh-nghiep', [HomeController::class, 'submitEnterprise'])->name('student.enterprise.submit');
 Route::post('/teach', [HomeController::class, 'submitTeach'])->name('student.teach.submit');

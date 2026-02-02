@@ -7,6 +7,7 @@ use App\Models\Document;
 use App\Models\DocumentTopic;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class DocumentController extends Controller
@@ -50,19 +51,32 @@ class DocumentController extends Controller
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'link' => ['required', 'string'],
+            'link_upload' => ['required', 'file', 'mimes:pdf', 'max:51200'], // 50MB
             'price' => ['nullable', 'numeric', 'min:0'],
             'published_at' => ['nullable', 'date'],
+            'description' => ['nullable', 'string'],
+            'thumbnail_upload' => ['nullable', 'image', 'max:2048'],
             'topic_ids' => ['nullable', 'array'],
             'topic_ids.*' => ['integer', 'exists:document_topics,id'],
             'new_topics' => ['nullable', 'string'],
         ]);
 
+        $description = trim($data['description'] ?? '');
+        $linkPath = $request->file('link_upload')->store('document-files', 'public');
+        $link = 'storage/' . $linkPath;
+        $thumbnail = null;
+        if ($request->hasFile('thumbnail_upload')) {
+            $thumbnailPath = $request->file('thumbnail_upload')->store('document-thumbnails', 'public');
+            $thumbnail = 'storage/' . $thumbnailPath;
+        }
+
         $document = Document::create([
             'title' => trim($data['title']),
-            'link' => trim($data['link']),
+            'link' => $link,
             'price' => $data['price'] ?? 0,
             'published_at' => $data['published_at'],
+            'description' => $description !== '' ? $description : null,
+            'thumbnail' => $thumbnail,
         ]);
 
         $topicIds = $this->resolveTopicIds($data['topic_ids'] ?? [], $data['new_topics'] ?? '');
@@ -85,19 +99,44 @@ class DocumentController extends Controller
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'link' => ['required', 'string'],
+            'link_upload' => ['nullable', 'file', 'mimes:pdf', 'max:51200'],
             'price' => ['nullable', 'numeric', 'min:0'],
             'published_at' => ['nullable', 'date'],
+            'description' => ['nullable', 'string'],
+            'thumbnail_upload' => ['nullable', 'image', 'max:2048'],
             'topic_ids' => ['nullable', 'array'],
             'topic_ids.*' => ['integer', 'exists:document_topics,id'],
             'new_topics' => ['nullable', 'string'],
         ]);
 
+        $description = trim($data['description'] ?? '');
+        $thumbnail = $document->thumbnail;
+        if ($request->hasFile('thumbnail_upload')) {
+            if ($thumbnail && str_starts_with($thumbnail, 'storage/document-thumbnails/')) {
+                $relativePath = Str::after($thumbnail, 'storage/');
+                Storage::disk('public')->delete($relativePath);
+            }
+            $thumbnailPath = $request->file('thumbnail_upload')->store('document-thumbnails', 'public');
+            $thumbnail = 'storage/' . $thumbnailPath;
+        }
+
+        $link = $document->link;
+        if ($request->hasFile('link_upload')) {
+            if ($link && str_starts_with($link, 'storage/document-files/')) {
+                $relative = Str::after($link, 'storage/');
+                Storage::disk('public')->delete($relative);
+            }
+            $linkPath = $request->file('link_upload')->store('document-files', 'public');
+            $link = 'storage/' . $linkPath;
+        }
+
         $document->update([
             'title' => trim($data['title']),
-            'link' => trim($data['link']),
+            'link' => $link,
             'price' => $data['price'] ?? 0,
             'published_at' => $data['published_at'],
+            'description' => $description !== '' ? $description : null,
+            'thumbnail' => $thumbnail,
         ]);
 
         $topicIds = $this->resolveTopicIds($data['topic_ids'] ?? [], $data['new_topics'] ?? '');

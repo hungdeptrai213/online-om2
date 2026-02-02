@@ -1,0 +1,550 @@
+﻿@extends('student.layouts.app')
+
+@section('title', $document->title)
+
+@section('style')
+    <style>
+        .document-detail-modal {
+            width: calc(100vw - 32px);
+            max-width: 1920px;
+            margin: 1.5rem auto 2.5rem;
+            background: #fcf7f1;
+            border-radius: 28px;
+            border: 1px solid #e2dcd2;
+            padding: 2.5rem;
+            box-shadow: 0 30px 60px rgba(15, 15, 15, 0.08);
+            overflow: hidden;
+        }
+
+        .document-detail-header a {
+            font-weight: 600;
+            color: #1f2d3d;
+        }
+
+        .book-frame {
+            background: linear-gradient(135deg, #faf8f4, #f0ebe4);
+            border-radius: 24px;
+            padding: 1rem 1.25rem 1.25rem;
+            border: 1px solid #dbd4c9;
+            position: relative;
+            box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .book-viewer {
+            position: relative;
+            min-height: 640px;
+            width: 100%;
+            max-height: 70vh;
+            margin: 0 auto;
+        }
+
+        .book-lock-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            border-radius: 18px;
+            z-index: 10;
+        }
+
+        .book-lock-overlay.show {
+            display: flex;
+        }
+
+        .book-lock-overlay .close-lock {
+            position: absolute;
+            top: 10px;
+            right: 14px;
+            background: rgba(255, 255, 255, 0.85);
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-weight: 700;
+            cursor: pointer;
+            color: #222;
+        }
+
+        .book-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .book-controls button {
+            min-width: 140px;
+            font-weight: 600;
+            border-radius: 999px;
+            border: 1px solid #d7c9b5;
+        }
+
+        .book-controls strong {
+            font-size: 1.2rem;
+        }
+
+        .fullscreen-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 5;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            padding: 0;
+            display: grid;
+            place-items: center;
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .book-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 1.25rem;
+        }
+
+        .book-controls button {
+            min-width: 140px;
+            font-weight: 600;
+            border-radius: 999px;
+            border: 1px solid #d7c9b5;
+        }
+
+        .book-controls strong {
+            font-size: 1.3rem;
+            display: block;
+        }
+
+        .pdf-message {
+            margin-top: 1rem;
+            text-align: center;
+            color: #5d554d;
+            font-weight: 500;
+        }
+
+        .info-panel {
+            background: #fff;
+            border-radius: 20px;
+            padding: 1.75rem;
+            box-shadow: 0 20px 40px rgba(15, 15, 15, 0.08);
+            border: 1px solid #ece6d8;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .info-panel img {
+            width: 100%;
+            border-radius: 16px;
+            object-fit: contain;
+            max-height: 260px;
+            background: #f7f7f7;
+            padding: 6px;
+        }
+
+        .info-panel .topic-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #f1ede5;
+            color: #5f4f3e;
+            font-size: 0.9rem;
+        }
+
+        .info-panel .info-meta {
+            font-size: 0.95rem;
+            color: #6b5e51;
+        }
+
+        .info-panel .btn {
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 991px) {
+            .document-detail-modal {
+                padding: 1.5rem;
+            }
+
+            .book-frame {
+                padding: 1.5rem;
+            }
+
+            .info-panel {
+                padding: 1.25rem;
+            }
+        }
+    </style>
+@endsection
+
+@section('content')
+    <div class="container-fluid px-2 px-md-3 px-lg-4">
+        <div class="document-detail-modal">
+            <div class="document-detail-header d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+                <div>
+                    <p class="text-uppercase text-muted mb-1" style="letter-spacing:0.08em;">TĂ i liá»‡u chuyĂªn sĂ¢u</p>
+                    <h1 class="fs-2 fw-bold mb-0">{{ $document->title }}</h1>
+                </div>
+                <a href="{{ route('student.materials') }}" class="btn btn-outline-dark" style="border-radius:999px;">â† Trá»Ÿ vá» kho tĂ i liá»‡u</a>
+            </div>
+            <div class="row gx-5 gy-5">
+                <div class="col-lg-9">
+                    <div class="book-frame" id="bookFrame">
+                        <button id="fullscreenBtn" class="btn btn-outline-dark fullscreen-btn" aria-label="Toàn màn hình">&#x26F6;</button>
+                        <div id="bookViewer" class="book-viewer">
+                            <div class="book-lock-overlay" id="lockOverlay">
+                                <button type="button" class="close-lock" aria-label="Đóng">×</button>
+                                <p class="fs-4 mb-2">Chỉ xem thử 4 trang. Mua để mở khóa toàn bộ tài liệu.</p>
+                                <a href="{{ route('student.documents.cart', ['document' => ->id]) }}" class="btn btn-success mt-2">Mua ngay</a>
+                            </div>
+                        </div>
+                        <div id="pdfMessage" class="pdf-message">Đang tải tài liệu...</div>
+                        <div class="book-controls">
+                            <button id="prevPageBtn" class="btn btn-light">Trang trÆ°á»›c</button>
+                            <div class="text-center">
+                                <span class="text-muted d-block mb-1">Äang Ä‘á»c</span>
+                                <strong id="pageIndicator">â€”</strong>
+                            </div>
+                            <button id="nextPageBtn" class="btn btn-light">Trang sau</button>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a id="openOriginalLink" href="{{ $originalLink }}" target="_blank" rel="noreferrer" class="text-decoration-underline small">Má»Ÿ file gá»‘c (trÆ°á»ng há»£p PDF khĂ´ng hiá»ƒn thá»‹)</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="info-panel">
+                        <img src="{{ $document->thumbnail ?: asset('om-front/img/Open Document.png') }}"
+                             alt="áº¢nh Ä‘áº¡i diá»‡n {{ $document->title }}">
+                        <div>
+                            <p class="fs-5 fw-semibold mb-1">{{ $document->title }}</p>
+                            <p class="info-meta mb-1">NgĂ y phĂ¡t hĂ nh: {{ $document->published_at ? $document->published_at->format('d/m/Y') : 'ChÆ°a rĂµ' }}</p>
+                            <p class="fs-5 mb-1">
+                                {{ $document->price > 0 ? 'GiĂ¡: ' . number_format($document->price, 0, ',', '.') . ' VNÄ' : 'Miá»…n phĂ­' }}
+                            </p>
+                            <p class="text-muted" style="font-size:0.95rem; min-height:68px;">
+                                {{ $document->description ?: 'Äang cáº­p nháº­t mĂ´ táº£ chi tiáº¿t.' }}
+                            </p>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach($document->topics as $topic)
+                                <span class="topic-chip">#{{ $topic->name }}</span>
+                            @endforeach
+                        </div>
+                        <div class="d-grid">
+                            @if($document->price > 0)
+                                @if($isPurchased)
+                                    <a href="{{ $document->link }}" target="_blank" rel="noreferrer" class="btn btn-success">Táº£i tĂ i liá»‡u báº¡n Ä‘Ă£ mua</a>
+                                @else
+                                    <a href="{{ route('student.documents.cart', ['document' => $document->id]) }}" class="btn btn-primary">Mua tĂ i liá»‡u</a>
+                                @endif
+                            @else
+                                <a href="{{ $document->link }}" id="freeDownloadBtn" data-download-link="{{ $originalLink }}" class="btn btn-success">Táº£i miá»…n phĂ­</a>
+                            @endif
+                        </div>
+                        @if($isPurchased && $document->price > 0)
+                            <p class="text-success small mb-0">Báº¡n Ä‘Ă£ thanh toĂ¡n tĂ i liá»‡u nĂ y. Kiá»ƒm tra email Ä‘á»ƒ nháº­n file trá»±c tiáº¿p vĂ  hÆ°á»›ng dáº«n táº£i.</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+
+{{-- Modal Ä‘á»£i táº£i cho tĂ i liá»‡u miá»…n phĂ­ --}}
+<div class="modal fade" id="downloadWaitModal" tabindex="-1" aria-labelledby="downloadWaitModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="width:100%;max-width:720px;">
+        <div class="modal-content rounded-4 border-0 shadow-sm">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fs-3 fw-bold" id="downloadWaitModalLabel">Äang chuáº©n bá»‹ tĂ i liá»‡u</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="ÄĂ³ng"></button>
+            </div>
+            <div class="modal-body fs-4">
+                <p class="mb-2">Chá» <span id="downloadCountdown">30</span> giĂ¢y Ä‘á»ƒ há»‡ thá»‘ng táº¡o Ä‘Æ°á»ng dáº«n táº£i.</p>
+                <p class="text-muted mb-3">KhĂ´ng Ä‘Ă³ng cá»­a sá»• nĂ y náº¿u báº¡n muá»‘n nháº­n tĂ i liá»‡u.</p>
+                <div class="progress" style="height:6px;">
+                    <div id="downloadProgress" class="progress-bar bg-primary" role="progressbar" style="width:0;transition:none;" aria-valuemin="0" aria-valuemax="30"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+    <link rel="stylesheet" href="{{ asset('vendor/page-flip/page-flip.css') }}">
+    <script>
+        // Æ¯u tiĂªn file local, fallback qua 3 CDN náº¿u lá»—i máº¡ng
+        (function loadPageFlip() {
+            const sources = [
+                '{{ asset('vendor/page-flip/page-flip.browser.js') }}',
+                'https://unpkg.com/page-flip@2.0.7/dist/js/page-flip.browser.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/page-flip/2.0.7/js/page-flip.browser.js',
+                'https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js'
+            ];
+            const inject = (idx = 0) => {
+                if (idx >= sources.length) return;
+                const s = document.createElement('script');
+                s.src = sources[idx];
+                s.defer = true;
+                s.onerror = () => inject(idx + 1);
+                document.head.appendChild(s);
+            };
+            inject();
+        })();
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const messageEl = document.getElementById('pdfMessage');
+            const prevBtn = document.getElementById('prevPageBtn');
+            const nextBtn = document.getElementById('nextPageBtn');
+            const pageIndicator = document.getElementById('pageIndicator');
+            const pdfUrl = @json($pdfUrl);
+            const openOriginalLink = document.getElementById('openOriginalLink');
+            const bookViewer = document.getElementById('bookViewer');
+            const lockOverlay = document.getElementById('lockOverlay');
+            const lockCloseBtn = lockOverlay?.querySelector('.close-lock');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const isPaid = {{ $document->price > 0 ? 'true' : 'false' }};
+            const maxPreviewPages = 4;
+            const freeDownloadBtn = document.getElementById('freeDownloadBtn');
+            const downloadModalEl = document.getElementById('downloadWaitModal');
+            const countdownEl = document.getElementById('downloadCountdown');
+            const progressEl = document.getElementById('downloadProgress');
+            const bsDownloadModal = downloadModalEl ? new bootstrap.Modal(downloadModalEl, { backdrop: 'static', keyboard: false }) : null;
+            let countdownTimer = null;
+
+            const startCountdown = (url) => {
+                if (!bsDownloadModal) return window.location.assign(url);
+                let remaining = 30;
+                countdownEl.textContent = remaining;
+                progressEl.style.width = '0%';
+                progressEl.style.transition = 'width 1s linear';
+                bsDownloadModal.show();
+                countdownTimer = setInterval(() => {
+                    remaining -= 1;
+                    const safeRemaining = Math.max(remaining, 0);
+                    countdownEl.textContent = safeRemaining;
+                    const filled = ((30 - safeRemaining) / 30) * 100;
+                    progressEl.style.width = `${filled}%`;
+                    if (remaining < 0) {
+                        clearInterval(countdownTimer);
+                        countdownTimer = null;
+                        bsDownloadModal.hide();
+                        window.location.assign(url);
+                    }
+                }, 1000);
+            };
+
+            if (freeDownloadBtn) {
+                freeDownloadBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = freeDownloadBtn.dataset.downloadLink;
+                    if (!target) return;
+                    startCountdown(target);
+                });
+            }
+
+            if (!pdfUrl) {
+                messageEl.textContent = 'KhĂ´ng tĂ¬m tháº¥y Ä‘Æ°á»ng dáº«n PDF há»£p lá»‡ hoáº·c file chÆ°a Ä‘Æ°á»£c chia sáº» cĂ´ng khai.';
+                return;
+            }
+
+            const CDN_JS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+            const CDN_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            const FALLBACK_JS = 'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js';
+            const FALLBACK_WORKER = 'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+
+            const loadPdfJs = () => new Promise((resolve, reject) => {
+                if (window.pdfjsLib?.GlobalWorkerOptions) {
+                    return resolve({ lib: window.pdfjsLib, worker: CDN_WORKER });
+                }
+                const script = document.createElement('script');
+                script.src = CDN_JS;
+                script.onload = () => {
+                    if (window.pdfjsLib?.GlobalWorkerOptions) {
+                        return resolve({ lib: window.pdfjsLib, worker: CDN_WORKER });
+                    }
+                    reject(new Error('pdfjsLib thiáº¿u sau khi táº£i CDN'));
+                };
+                script.onerror = () => {
+                    const fallback = document.createElement('script');
+                    fallback.src = FALLBACK_JS;
+                    fallback.onload = () => {
+                        if (window.pdfjsLib?.GlobalWorkerOptions) {
+                            return resolve({ lib: window.pdfjsLib, worker: FALLBACK_WORKER });
+                        }
+                        reject(new Error('pdfjsLib thiáº¿u sau khi táº£i fallback'));
+                    };
+                    fallback.onerror = () => reject(new Error('KhĂ´ng táº£i Ä‘Æ°á»£c thÆ° viá»‡n pdf.js'));
+                    document.head.appendChild(fallback);
+                };
+                document.head.appendChild(script);
+            });
+
+            let pdfDoc = null;
+            let pageFlip = null;
+
+            const getPageFlipClass = () => {
+                const lib = window.St || window.pageflip || {};
+                return lib.PageFlip || lib.PageFlipBrowser || null;
+            };
+
+            const waitForPageFlipClass = (timeout = 12000) => new Promise((resolve, reject) => {
+                const start = Date.now();
+                const lookup = () => {
+                    const cls = getPageFlipClass();
+                    if (cls) return resolve(cls);
+                    if (Date.now() - start >= timeout) {
+                        return reject(new Error('KhÄ‚Â´ng tĂ¡ÂºÂ£i Ă„â€˜Ă†Â°Ă¡Â»Â£c PageFlip Ă„â€˜Ă¡Â»Æ’ hiĂ¡Â»Æ’n thĂ¡Â»â€¹ hiĂ¡Â»â€¡u Ă¡Â»Â©ng lĂ¡ÂºÂ­t trang.'));
+                    }
+                    requestAnimationFrame(lookup);
+                };
+                lookup();
+            });
+
+            const updateNavigator = (page) => {
+                if (!pageFlip) {
+                    pageIndicator.textContent = 'â€”';
+                    prevBtn.disabled = true;
+                    nextBtn.disabled = true;
+                    return;
+                }
+                const idx = page ?? pageFlip.getCurrentPageIndex();
+                const total = pageFlip.getPageCount();
+                pageIndicator.textContent = `${idx + 1} / ${total}`;
+                prevBtn.disabled = idx <= 0;
+                nextBtn.disabled = idx >= total - 1;
+            };
+
+            const enterFullscreen = () => {
+                const el = document.getElementById('bookFrame');
+                if (document.fullscreenElement) {
+                    document.exitFullscreen().catch(() => {});
+                } else {
+                    el.requestFullscreen?.().catch(() => {});
+                }
+            };
+
+            fullscreenBtn.addEventListener('click', enterFullscreen);
+            lockCloseBtn?.addEventListener('click', () => lockOverlay.classList.remove('show'));
+
+            prevBtn.addEventListener('click', () => {
+                if (!pageFlip) return;
+                pageFlip.flipPrev();
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (!pageFlip) return;
+                const nextIndex = pageFlip.getCurrentPageIndex() + 1;
+                if (isPaid && nextIndex >= maxPreviewPages) {
+                    lockOverlay.classList.add('show');
+                    return;
+                }
+                pageFlip.flipNext();
+            });
+
+            loadPdfJs()
+                .then(({ lib, worker }) => {
+                    lib.GlobalWorkerOptions.workerSrc = worker;
+                    return lib.getDocument({ url: pdfUrl, withCredentials: false }).promise;
+                })
+                .then(async (doc) => {
+                    pdfDoc = doc;
+                    const total = doc.numPages;
+                    const allowed = isPaid ? Math.min(maxPreviewPages, total) : total;
+                    const pages = [];
+                    const viewerWidth = Math.min(bookViewer.clientWidth || 900, 1000);
+                    const viewerHeight = Math.min(window.innerHeight * 0.7, 900);
+                    let baseWidth = viewerWidth;
+                    let baseHeight = viewerHeight;
+                    const renderPageToImage = async (pageNumber) => {
+                        const page = await doc.getPage(pageNumber);
+                        const viewport = page.getViewport({ scale: 1 });
+                        const scale = Math.min(viewerWidth / viewport.width, viewerHeight / viewport.height, 1.2);
+                        const scaledViewport = page.getViewport({ scale });
+                        baseWidth = Math.round(scaledViewport.width);
+                        baseHeight = Math.round(scaledViewport.height);
+                        const tempCanvas = document.createElement('canvas');
+                        const ctx = tempCanvas.getContext('2d');
+                        tempCanvas.width = scaledViewport.width;
+                        tempCanvas.height = scaledViewport.height;
+                        await page.render({ canvasContext: ctx, viewport: scaledViewport }).promise;
+                        return tempCanvas.toDataURL('image/png');
+                    };
+
+                    for (let i = 1; i <= allowed; i++) {
+                        const dataUrl = await renderPageToImage(i);
+                        pages.push({ src: dataUrl, alt: `Trang ${i}` });
+                    }
+
+                    if (isPaid && total > allowed) {
+                        pages.push({ lock: true });
+                    }
+
+                    bookViewer.innerHTML = '';
+                    const pageNodes = pages.map((p) => {
+                        const div = document.createElement('div');
+                        div.className = 'page';
+                        div.style.width = `${baseWidth}px`;
+                        div.style.height = `${baseHeight}px`;
+                        div.style.overflow = 'hidden';
+                        div.innerHTML = p.lock
+                            ? `<div class="page-content" style="display:flex;align-items:center;justify-content:center;height:100%;background:#111;color:#fff;border-radius:12px;padding:16px;text-align:center;">Trang bá»‹ khĂ³a. Mua Ä‘á»ƒ xem toĂ n bá»™.</div>`
+                            : `<div class="page-content" style="display:flex;align-items:center;justify-content:center;height:100%;background:#fff;"><img src="${p.src}" alt="${p.alt}" style="max-width:100%;max-height:100%;object-fit:contain;"></div>`;
+                        bookViewer.appendChild(div);
+                        return div;
+                    });
+
+                    const PageFlipClass = await waitForPageFlipClass();
+
+                    pageFlip = new PageFlipClass(bookViewer, {
+                        width: baseWidth,
+                        height: baseHeight,
+                        size: 'stretch',
+                        maxShadowOpacity: 0.25,
+                        showCover: false,
+                        useMouseEvents: true,
+                        mobileScrollSupport: false,
+                        showPageCorners: true,
+                    });
+
+                    pageFlip.loadFromHTML(pageNodes);
+
+                    pageFlip.on('flip', (e) => {
+                        if (isPaid && e.data >= allowed) {\n                            lockOverlay.classList.add('show');\n                            pageFlip.flip(allowed - 1);\n                            updateNavigator(allowed - 1);\n                            return;\n                        }
+                        lockOverlay.classList.remove('show');
+                        updateNavigator(e.data);
+                    });
+
+                    updateNavigator(0);
+                    messageEl.textContent = 'Táº£i tĂ i liá»‡u thĂ nh cĂ´ng.';
+                })
+                .catch((err) => {
+                    console.error(err);
+                    messageEl.textContent = 'KhĂ´ng thá»ƒ khá»Ÿi táº¡o hoáº·c táº£i tĂ i liá»‡u PDF. Kiá»ƒm tra káº¿t ná»‘i vĂ  Ä‘áº£m báº£o file cĂ´ng khai.';
+                    prevBtn.disabled = true;
+                    nextBtn.disabled = true;
+                    pageIndicator.textContent = 'â€”';
+                });
+        });
+    </script>
+@endpush
+
+
+
+
+
+
