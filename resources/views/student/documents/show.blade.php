@@ -346,6 +346,42 @@
             font-weight: 500;
         }
 
+        .document-body {
+            margin-top: 2rem;
+        }
+
+        .document-info {
+            background: #f9f6f1;
+            border-radius: 18px;
+            padding: 1.5rem;
+            border: 1px solid #e2dcd2;
+        }
+
+        .document-info h3,
+        .document-info h4 {
+            font-weight: 700;
+            color: #1f2d3d;
+        }
+
+        .document-info p {
+            color: #4f463f;
+        }
+
+        .related-documents ul {
+            list-style: disc;
+            padding-left: 1.25rem;
+            margin-bottom: 0;
+        }
+
+        .related-documents a {
+            color: #0c3b2e;
+            text-decoration: none;
+        }
+
+        .related-documents a:hover {
+            text-decoration: underline;
+        }
+
         .info-panel {
             background-color: hsla(0, 0%, 74%, 0.2);
             border-radius: 20px;
@@ -426,6 +462,8 @@
                 : ($thumb
                     ? asset($thumb)
                     : asset('om-front/img/Open Document.png'));
+        $descriptionText = trim((string) ($document->description ?? ''));
+        $introText = $descriptionText !== '' ? \Illuminate\Support\Str::limit($descriptionText, 260) : null;
     @endphp
     <div class="container container-fluid px-2 px-md-3 px-lg-4">
         <div class="document-detail-modal">
@@ -438,9 +476,11 @@
                     kho tài liệu</a>
             </div>
             <div class="row gx-5 gy-5">
-                <div class="col-lg-9">
+                <div class="col-12">
                     <div class="book-frame" id="bookFrame">
-                       
+                        <div class="flipbook-head">
+                            <div class="flipbook-title">{{ $document->title }}</div>
+                        </div>
                         <div class="flipbook-stage">
                             <div class="book-lock-overlay" id="lockOverlay">
                                 <button type="button" class="close-lock" aria-label="Đóng">×</button>
@@ -516,7 +556,40 @@
                         </div> --}}
                     </div>
                 </div>
-                <div class="col-lg-3">
+            </div>
+            <div class="row gx-5 gy-5 document-body">
+                <div class="col-lg-8">
+                    <div class="document-info">
+                        <h3 class="mb-3">Giới thiệu tài liệu</h3>
+                        <p class="mb-4">
+                            {{ $introText ?: 'Đang cập nhật giới thiệu tài liệu.' }}
+                        </p>
+                        <h4 class="mb-3">Mô tả tài liệu</h4>
+                        <p class="mb-4">
+                            {!! nl2br(e($descriptionText ?: 'Đang cập nhật mô tả chi tiết.')) !!}
+                        </p>
+                        <h4 class="mb-2">Giảng viên</h4>
+                        <p class="fw-semibold mb-1">{{ $document->lecturer_name ?: 'Đang cập nhật' }}</p>
+                        <p class="mb-0">{!! nl2br(e($document->lecturer_bio ?: 'Đang cập nhật thông tin giảng viên.')) !!}</p>
+                    </div>
+                    <div class="related-documents mt-4">
+                        <h4 class="mb-2">Tài liệu liên quan</h4>
+                        @if ($relatedDocuments->isNotEmpty())
+                            <ul>
+                                @foreach ($relatedDocuments as $related)
+                                    <li>
+                                        <a href="{{ route('student.documents.show', ['document' => $related->id]) }}">
+                                            {{ $related->title }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <p class="text-muted mb-0">Chưa có tài liệu liên quan.</p>
+                        @endif
+                    </div>
+                </div>
+                <div class="col-lg-4">
                     <div class="info-panel shadow">
                         <img src="{{ $thumbUrl }}" alt="Ảnh đại diện {{ $document->title }}">
                         <div>

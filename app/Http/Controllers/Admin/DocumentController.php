@@ -55,6 +55,8 @@ class DocumentController extends Controller
             'price' => ['nullable', 'numeric', 'min:0'],
             'published_at' => ['nullable', 'date'],
             'description' => ['nullable', 'string'],
+            'lecturer_name' => ['nullable', 'string', 'max:255'],
+            'lecturer_bio' => ['nullable', 'string', 'max:2000'],
             'thumbnail_upload' => ['nullable', 'image', 'max:2048'],
             'topic_ids' => ['nullable', 'array'],
             'topic_ids.*' => ['integer', 'exists:document_topics,id'],
@@ -62,6 +64,8 @@ class DocumentController extends Controller
         ]);
 
         $description = trim($data['description'] ?? '');
+        $lecturerName = trim($data['lecturer_name'] ?? '');
+        $lecturerBio = trim($data['lecturer_bio'] ?? '');
         $linkPath = $request->file('link_upload')->store('document-files', 'public');
         $link = 'storage/' . $linkPath;
         $thumbnail = null;
@@ -76,6 +80,8 @@ class DocumentController extends Controller
             'price' => $data['price'] ?? 0,
             'published_at' => $data['published_at'],
             'description' => $description !== '' ? $description : null,
+            'lecturer_name' => $lecturerName !== '' ? $lecturerName : null,
+            'lecturer_bio' => $lecturerBio !== '' ? $lecturerBio : null,
             'thumbnail' => $thumbnail,
         ]);
 
@@ -103,6 +109,8 @@ class DocumentController extends Controller
             'price' => ['nullable', 'numeric', 'min:0'],
             'published_at' => ['nullable', 'date'],
             'description' => ['nullable', 'string'],
+            'lecturer_name' => ['nullable', 'string', 'max:255'],
+            'lecturer_bio' => ['nullable', 'string', 'max:2000'],
             'thumbnail_upload' => ['nullable', 'image', 'max:2048'],
             'topic_ids' => ['nullable', 'array'],
             'topic_ids.*' => ['integer', 'exists:document_topics,id'],
@@ -110,6 +118,8 @@ class DocumentController extends Controller
         ]);
 
         $description = trim($data['description'] ?? '');
+        $lecturerName = trim($data['lecturer_name'] ?? '');
+        $lecturerBio = trim($data['lecturer_bio'] ?? '');
         $thumbnail = $document->thumbnail;
         if ($request->hasFile('thumbnail_upload')) {
             if ($thumbnail && str_starts_with($thumbnail, 'storage/document-thumbnails/')) {
@@ -136,6 +146,8 @@ class DocumentController extends Controller
             'price' => $data['price'] ?? 0,
             'published_at' => $data['published_at'],
             'description' => $description !== '' ? $description : null,
+            'lecturer_name' => $lecturerName !== '' ? $lecturerName : null,
+            'lecturer_bio' => $lecturerBio !== '' ? $lecturerBio : null,
             'thumbnail' => $thumbnail,
         ]);
 

@@ -17,6 +17,8 @@ class Document extends Model
         'published_at',
         'description',
         'thumbnail',
+        'lecturer_name',
+        'lecturer_bio',
     ];
 
     protected $casts = [

@@ -234,12 +234,26 @@ class HomeController extends Controller
         $isPurchased = $this->getPurchasedDocumentIdsForStudent($student)->contains($document->id);
         $pdfUrl = $this->resolveDocumentPdfUrl($document);
         $originalLink = $this->resolveDocumentOriginalUrl($document);
+        $topicIds = $document->topics->pluck('id');
+
+        $relatedDocuments = Document::with('topics')
+            ->when($topicIds->isNotEmpty(), function ($q) use ($topicIds) {
+                $q->whereHas('topics', function ($tq) use ($topicIds) {
+                    $tq->whereIn('document_topics.id', $topicIds);
+                });
+            })
+            ->where('id', '!=', $document->id)
+            ->orderByDesc('published_at')
+            ->orderByDesc('id')
+            ->take(3)
+            ->get();
 
         return view('student.documents.show', [
             'document' => $document,
             'isPurchased' => $isPurchased,
             'pdfUrl' => $pdfUrl,
             'originalLink' => $originalLink,
+            'relatedDocuments' => $relatedDocuments,
         ]);
     }
 

@@ -28,6 +28,20 @@
                 @error('description')<div style="color:#d92a1c;font-size:13px;">{{ $message }}</div>@enderror
             </div>
             <div style="display:grid;gap:6px;">
+                <label for="lecturer_name">Giang vien</label>
+                <input id="lecturer_name" name="lecturer_name" type="text" value="{{ old('lecturer_name') }}"
+                       placeholder="VD: Nguyen Van A"
+                       style="padding:10px 12px;border:1px solid #ced4da;border-radius:8px;">
+                @error('lecturer_name')<div style="color:#d92a1c;font-size:13px;">{{ $message }}</div>@enderror
+            </div>
+            <div style="display:grid;gap:6px;">
+                <label for="lecturer_bio">Gioi thieu giang vien</label>
+                <textarea id="lecturer_bio" name="lecturer_bio" rows="4"
+                          placeholder="Tom tat kinh nghiem giang day, chuyen mon..."
+                          style="padding:10px 12px;border:1px solid #ced4da;border-radius:8px;">{{ old('lecturer_bio') }}</textarea>
+                @error('lecturer_bio')<div style="color:#d92a1c;font-size:13px;">{{ $message }}</div>@enderror
+            </div>
+            <div style="display:grid;gap:6px;">
                 <label for="thumbnail_upload">Ảnh bìa nhỏ (upload)</label>
                 <input id="thumbnail_upload" name="thumbnail_upload" type="file" accept="image/*"
                        style="padding:10px 12px;border:1px solid #ced4da;border-radius:8px;background:#fff;">
@@ -74,3 +88,5 @@
         </form>
     </div>
 @endsection
+
+
