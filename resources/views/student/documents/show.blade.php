@@ -30,6 +30,101 @@
             overflow: hidden;
         }
 
+        .book-frame:fullscreen {
+            width: 100%;
+            height: 100vh;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .book-frame:fullscreen .flipbook-stage {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-height: none;
+        }
+
+        .book-frame:-webkit-full-screen {
+            width: 100%;
+            height: 100vh;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .book-frame:-webkit-full-screen .flipbook-stage {
+            flex: 1 1 auto;
+            min-height: 0;
+            max-height: none;
+        }
+
+        .flipbook-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .flipbook-title {
+            font-weight: 600;
+            color: #1f2d3d;
+        }
+
+        .flipbook-page-jump {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: #2f2a25;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .page-jump-input {
+            width: 64px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid #d7c9b5;
+            text-align: center;
+            font-weight: 600;
+            background: #fff;
+            color: #2f2a25;
+            font-size: 0.9rem;
+        }
+
+        .flipbook-controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 0.65rem 0.9rem;
+            margin-top: 0.75rem;
+        }
+
+        .flipbook-controls .nav-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.4rem 0.6rem;
+        }
+
+        .flipbook-controls .nav-group .btn {
+            min-width: 120px;
+            font-weight: 600;
+            border-radius: 999px;
+        }
+
+        .flipbook-controls .tool-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
         .flipbook-toolbar {
             display: grid;
             grid-template-columns: 1fr auto auto;
@@ -64,7 +159,9 @@
 
         .flipbook-stage {
             position: relative;
-
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 18px;
             padding: 18px;
             min-height: 620px;
@@ -91,17 +188,18 @@
             top: 12px;
             bottom: 12px;
             left: 50%;
-            width: 2px;
+            width: 6px;
             transform: translateX(-50%);
             background: linear-gradient(180deg,
-                    transparent 0%,
-                    rgba(0, 0, 0, 0.12) 25%,
-                    rgba(0, 0, 0, 0.18) 50%,
-                    rgba(0, 0, 0, 0.12) 75%,
-                    transparent 100%);
-            opacity: 0.45;
+                    rgba(0, 0, 0, 0) 0%,
+                    rgba(0, 0, 0, 0.18) 25%,
+                    rgba(0, 0, 0, 0.28) 50%,
+                    rgba(0, 0, 0, 0.18) 75%,
+                    rgba(0, 0, 0, 0) 100%);
+            opacity: 0.6;
             pointer-events: none;
             mix-blend-mode: multiply;
+            box-shadow: 0 0 14px rgba(0, 0, 0, 0.25);
         }
 
         .page {
@@ -220,10 +318,11 @@
             box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
         }
 
+        .tool-btn,
         .fullscreen-btn {
             border-radius: 50%;
-            width: 42px;
-            height: 42px;
+            width: 36px;
+            height: 36px;
             padding: 0;
             display: grid;
             place-items: center;
@@ -234,6 +333,7 @@
             transition: transform 120ms ease, box-shadow 120ms ease;
         }
 
+        .tool-btn:hover,
         .fullscreen-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
@@ -295,6 +395,21 @@
                 padding: 1.5rem;
             }
 
+            .flipbook-head {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .flipbook-page-jump {
+                justify-content: flex-start;
+                width: 100%;
+            }
+
+            .flipbook-controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
             .info-panel {
                 padding: 1.25rem;
             }
@@ -325,32 +440,7 @@
             <div class="row gx-5 gy-5">
                 <div class="col-lg-9">
                     <div class="book-frame" id="bookFrame">
-                        <div class="flipbook-toolbar">
-                            <div class="nav-group">
-                                <button type="button" class="btn btn-primary btn-prev">Trang trước</button>
-                                <span class="page-counter">[<span class="page-current">1</span> of <span
-                                        class="page-total">-</span>]</span>
-                                <button type="button" class="btn btn-primary btn-next">Trang sau</button>
-                            </div>
-                            <div class="flipbook-status" style="display: none">
-                                State: <i class="page-state">—</i>, orientation: <i class="page-orientation">—</i>
-                            </div>
-                            <button id="fullscreenBtn" class="btn btn-outline-dark fullscreen-btn"
-                                aria-label="Toàn màn hình">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="M4 9V5a1 1 0 0 1 1-1h4" />
-                                    <path d="M20 9V5a1 1 0 0 0-1-1h-4" />
-                                    <path d="M4 15v4a1 1 0 0 0 1 1h4" />
-                                    <path d="M20 15v4a1 1 0 0 1-1 1h-4" />
-                                    <polyline points="9 4 4 9" />
-                                    <polyline points="15 4 20 9" />
-                                    <polyline points="4 15 9 20" />
-                                    <polyline points="20 15 15 20" />
-                                </svg>
-                            </button>
-                        </div>
+                       
                         <div class="flipbook-stage">
                             <div class="book-lock-overlay" id="lockOverlay">
                                 <button type="button" class="close-lock" aria-label="Đóng">×</button>
@@ -359,6 +449,66 @@
                                     class="btn btn-success mt-2 px-4">Mua tài liệu</a>
                             </div>
                             <div class="flip-book" id="flipBook"></div>
+                        </div>
+                        <div class="flipbook-controls">
+                            <div class="nav-group">
+                                <button type="button" class="tool-btn btn-prev" aria-label="Trang trước">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="15 18 9 12 15 6" />
+                                    </svg>
+                                </button>
+                                <button type="button" class="tool-btn btn-next" aria-label="Trang sau">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="9 18 15 12 9 6" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="flipbook-page-jump">
+                                <span>Trang</span>
+                                <input id="pageJumpInput" class="page-jump-input" type="number" min="1" value="1"
+                                    inputmode="numeric" />
+                                <span>/</span>
+                                <span class="page-total">-</span>
+                            </div>
+                            <div class="tool-group">
+                                <button type="button" class="tool-btn" id="zoomOutBtn" aria-label="Thu nhỏ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                        <line x1="8" y1="11" x2="14" y2="11" />
+                                    </svg>
+                                </button>
+                                <button type="button" class="tool-btn" id="zoomInBtn" aria-label="Phóng to">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8" />
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                        <line x1="11" y1="8" x2="11" y2="14" />
+                                        <line x1="8" y1="11" x2="14" y2="11" />
+                                    </svg>
+                                </button>
+                                <button id="fullscreenBtn" class="tool-btn" aria-label="Toàn màn hình">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="M4 9V5a1 1 0 0 1 1-1h4" />
+                                        <path d="M20 9V5a1 1 0 0 0-1-1h-4" />
+                                        <path d="M4 15v4a1 1 0 0 0 1 1h4" />
+                                        <path d="M20 15v4a1 1 0 0 1-1 1h-4" />
+                                        <polyline points="9 4 4 9" />
+                                        <polyline points="15 4 20 9" />
+                                        <polyline points="4 15 9 20" />
+                                        <polyline points="20 15 15 20" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                         <div id="pdfMessage" class="pdf-message">Đang tải tài liệu...</div>
                         {{-- <div class="text-center mt-3">
@@ -458,10 +608,8 @@
             const pdfMessageEl = document.getElementById('pdfMessage');
             const prevBtn = document.querySelector('.btn-prev');
             const nextBtn = document.querySelector('.btn-next');
-            const pageCurrentEl = document.querySelector('.page-current');
+            const pageInputEl = document.getElementById('pageJumpInput');
             const pageTotalEl = document.querySelector('.page-total');
-            const pageStateEl = document.querySelector('.page-state');
-            const pageOrientationEl = document.querySelector('.page-orientation');
             const pdfUrl = @json($pdfUrl);
             const coverUrl = @json($thumbUrl);
             const flipBookEl = document.getElementById('flipBook');
@@ -469,6 +617,8 @@
             const lockOverlay = document.getElementById('lockOverlay');
             const lockCloseBtn = lockOverlay?.querySelector('.close-lock');
             const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const zoomInBtn = document.getElementById('zoomInBtn');
+            const zoomOutBtn = document.getElementById('zoomOutBtn');
             const isLocked = {{ $document->price > 0 && !$isPurchased ? 'true' : 'false' }};
             const maxPreviewPages = 4;
             const freeDownloadBtn = document.getElementById('freeDownloadBtn');
@@ -480,6 +630,16 @@
                 keyboard: false
             }) : null;
             let countdownTimer = null;
+            let zoomLevel = 1;
+            const zoomMin = 0.8;
+            const zoomMax = 1.6;
+            const zoomStep = 0.1;
+
+            const applyZoom = (value) => {
+                zoomLevel = Math.min(zoomMax, Math.max(zoomMin, value));
+                flipBookEl.style.transform = `scale(${zoomLevel.toFixed(2)})`;
+                flipBookEl.style.transformOrigin = 'center center';
+            };
 
             const startCountdown = (url) => {
                 if (!bsDownloadModal) return window.location.assign(url);
@@ -515,6 +675,11 @@
             if (!pdfUrl) {
                 pdfMessageEl.textContent =
                     'Không tìm thấy đường dẫn PDF hợp lệ hoặc file chưa được chia sẻ công khai.';
+                if (pageInputEl) pageInputEl.disabled = true;
+                prevBtn.disabled = true;
+                nextBtn.disabled = true;
+                zoomInBtn?.setAttribute('disabled', 'disabled');
+                zoomOutBtn?.setAttribute('disabled', 'disabled');
                 return;
             }
 
@@ -593,21 +758,56 @@
                 return Math.max(count, 1);
             };
 
+            const getPageIndexByNumber = (number) => {
+                if (!number) return -1;
+                return pageMeta.findIndex((p) => p.type === 'page' && p.number === number);
+            };
+
             const updateNavigator = (pageIdx) => {
                 if (!pageFlip) {
-                    pageCurrentEl.textContent = '—';
+                    if (pageInputEl) pageInputEl.value = '';
                     pageTotalEl.textContent = '—';
                     prevBtn.disabled = true;
                     nextBtn.disabled = true;
                     return;
                 }
                 const idx = pageIdx ?? pageFlip.getCurrentPageIndex();
-                pageCurrentEl.textContent = displayPageNumber(idx);
+                const currentNumber = displayPageNumber(idx);
+                if (pageInputEl) {
+                    pageInputEl.value = currentNumber;
+                    pageInputEl.max = displayTotalPages();
+                }
                 pageTotalEl.textContent = displayTotalPages();
                 const lastAllowed = lockPageIndex ?? (pageMeta.length - 1);
                 prevBtn.disabled = idx <= 0;
                 nextBtn.disabled = idx >= lastAllowed;
             };
+
+            const jumpToPage = (value) => {
+                if (!pageFlip) return;
+                const total = displayTotalPages();
+                if (!total) return;
+                const safeValue = Math.min(Math.max(parseInt(value, 10) || 1, 1), total);
+                const targetIndex = getPageIndexByNumber(safeValue);
+                if (targetIndex >= 0) {
+                    pageFlip.flip(targetIndex);
+                    updateNavigator(targetIndex);
+                } else if (pageInputEl) {
+                    pageInputEl.value = safeValue;
+                }
+            };
+
+            if (pageInputEl) {
+                pageInputEl.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        jumpToPage(pageInputEl.value);
+                    }
+                });
+                pageInputEl.addEventListener('blur', () => {
+                    if (pageInputEl.value) jumpToPage(pageInputEl.value);
+                });
+            }
 
             const enterFullscreen = () => {
                 if (document.fullscreenElement) {
@@ -628,6 +828,14 @@
             nextBtn?.addEventListener('click', () => {
                 if (!pageFlip) return;
                 pageFlip.flipNext();
+            });
+
+            zoomInBtn?.addEventListener('click', () => {
+                applyZoom(zoomLevel + zoomStep);
+            });
+
+            zoomOutBtn?.addEventListener('click', () => {
+                applyZoom(zoomLevel - zoomStep);
             });
 
             const renderPageToImage = async (doc, pageNumber, maxWidth, maxHeight) => {
@@ -756,19 +964,11 @@
                         updateNavigator(e.data);
                     });
 
-                    pageFlip.on('changeState', (e) => {
-                        pageStateEl.textContent = e.data || 'read';
-                    });
-
-                    pageFlip.on('changeOrientation', (e) => {
-                        pageOrientationEl.textContent = e.data || 'landscape';
-                    });
-
-                    pageOrientationEl.textContent = pageFlip.getOrientation() || 'landscape';
-                    pageStateEl.textContent = 'read';
                     pdfMessageEl.textContent = 'Tải tài liệu thành công.';
                     flipBookEl.classList.add('ready');
                     pageTotalEl.textContent = displayTotalPages();
+                    if (pageInputEl) pageInputEl.max = displayTotalPages();
+                    applyZoom(1);
                     updateNavigator(0);
                 })
                 .catch((err) => {
@@ -777,8 +977,10 @@
                         'Không thể khởi tạo hoặc tải tài liệu PDF. Kiểm tra kết nối và đảm bảo file công khai.';
                     prevBtn.disabled = true;
                     nextBtn.disabled = true;
-                    pageCurrentEl.textContent = '—';
+                    if (pageInputEl) pageInputEl.value = '';
                     pageTotalEl.textContent = '—';
+                    zoomInBtn?.setAttribute('disabled', 'disabled');
+                    zoomOutBtn?.setAttribute('disabled', 'disabled');
                 });
         });
     </script>
