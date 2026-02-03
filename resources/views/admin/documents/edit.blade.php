@@ -3,6 +3,12 @@
 @section('title', 'Chỉnh sửa tài liệu')
 
 @section('content')
+    @php
+        $thumb = $document->thumbnail;
+        $thumbUrl = $thumb && \Illuminate\Support\Str::startsWith($thumb, ['http://', 'https://'])
+            ? $thumb
+            : ($thumb ? asset($thumb) : null);
+    @endphp
     <div class="page-card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
             <div>
@@ -32,9 +38,9 @@
                 <label for="thumbnail_upload">Ảnh bìa nhỏ (upload)</label>
                 <input id="thumbnail_upload" name="thumbnail_upload" type="file" accept="image/*"
                        style="padding:10px 12px;border:1px solid #ced4da;border-radius:8px;background:#fff;">
-                @if($document->thumbnail)
+                @if($thumbUrl)
                     <div style="display:flex;gap:10px;align-items:center;">
-                        <img src="{{ asset($document->thumbnail) }}" alt="Thumbnail hiện tại" style="height:80px;border-radius:8px;border:1px solid #e5e7eb;">
+                        <img src="{{ $thumbUrl }}" alt="Thumbnail hiện tại" style="height:80px;border-radius:8px;border:1px solid #e5e7eb;">
                         <span class="muted" style="font-size:13px;">Đang dùng ảnh hiện tại. Chọn file mới để thay.</span>
                     </div>
                 @endif

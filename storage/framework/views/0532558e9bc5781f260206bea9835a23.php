@@ -29,17 +29,17 @@
     <link rel="stylesheet" href="/om-front/css/custom.css">
     <link rel="stylesheet" href="/om-front/css/responsive.css">
 
-    @yield('style')
+    <?php echo $__env->yieldContent('style'); ?>
 
 </head>
 
 <body class="overflow-x-hidden">
-    @php use Illuminate\Support\Str; @endphp
+    <?php use Illuminate\Support\Str; ?>
 
     <!-- NavBar -->
     <nav class="navbar navbar-expand-lg bg-body py-0 position-sticky top-0 z-3 px-0 e-learning-nav">
         <div class="container border-bottom border-custom border-2">
-            <a class="navbar-brand py-0" href="{{ route('student.home') }}">
+            <a class="navbar-brand py-0" href="<?php echo e(route('student.home')); ?>">
 
                 <img src="/om-front/img/Logo Organic Marketing small (1).png" alt="Bootstrap" width=""
                     height="" class="d-md-none p-2 " style="max-height: 80px;">
@@ -54,58 +54,58 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav fw-bold">
                     <li class="nav-item">
-                        <a @class([
+                        <a class="<?php echo \Illuminate\Support\Arr::toCssClasses([
                             'nav-link',
                             'fs-2',
                             'me-xl-4',
                             'mon-alt',
                             'active' => request()->routeIs('student.home'),
-                        ]) href="{{ route('student.home') }}">Khóa Học</a>
+                        ]); ?>" href="<?php echo e(route('student.home')); ?>">Khóa Học</a>
                     </li>
                     <li class="nav-item">
-                        <a @class([
+                        <a class="<?php echo \Illuminate\Support\Arr::toCssClasses([
                             'nav-link',
                             'fs-2',
                             'me-xl-4',
                             'mon-alt',
                             'active' => request()->routeIs('student.coaching'),
-                        ]) href="{{ route('student.coaching') }}">Coaching</a>
+                        ]); ?>" href="<?php echo e(route('student.coaching')); ?>">Coaching</a>
                     </li>
                     <li class="nav-item">
-                        <a @class([
+                        <a class="<?php echo \Illuminate\Support\Arr::toCssClasses([
                             'nav-link',
                             'fs-2',
                             'me-xl-4',
                             'mon-alt',
                             'active' => request()->routeIs('student.schedule'),
-                        ]) href="{{ route('student.schedule') }}">Lịch Học</a>
+                        ]); ?>" href="<?php echo e(route('student.schedule')); ?>">Lịch Học</a>
                     </li>
                     <li class="nav-item">
-                        <a @class([
+                        <a class="<?php echo \Illuminate\Support\Arr::toCssClasses([
                             'nav-link',
                             'fs-2',
                             'me-xl-4',
                             'mon-alt',
                             'active' => request()->routeIs('student.enterprise'),
-                        ]) href="{{ route('student.enterprise') }}">Gói Doanh Nghiệp</a>
+                        ]); ?>" href="<?php echo e(route('student.enterprise')); ?>">Gói Doanh Nghiệp</a>
                     </li>
                     <li class="nav-item">
-                        <a @class([
+                        <a class="<?php echo \Illuminate\Support\Arr::toCssClasses([
                             'nav-link',
                             'fs-2',
                             'me-xl-4',
                             'mon-alt',
                             'active' => request()->routeIs('student.materials'),
-                        ]) href="{{ route('student.materials') }}">Tài Liệu</a>
+                        ]); ?>" href="<?php echo e(route('student.materials')); ?>">Tài Liệu</a>
                     </li>
                     <div class="d-sm-flex d-lg-none my-3 align-items-center">
                     <button class="btn btn-primary me-2 p-xl-4 p-lg-3 fs-4 fw-bold rounded-4" type="button"
                             data-bs-toggle="modal" data-bs-target="#teachModal" data-teach-modal>
                         Dạy trên OM Edu
                     </button>
-                        @auth('student')
-                            @php($student = auth('student')->user())
-                            @php($avatarUrl = $student->avatar ? asset($student->avatar) : null)
+                        <?php if(auth()->guard('student')->check()): ?>
+                            <?php ($student = auth('student')->user()); ?>
+                            <?php ($avatarUrl = $student->avatar ? asset($student->avatar) : null); ?>
                             <div class="dropdown w-100">
                                 <button class="btn w-100 d-flex align-items-center justify-content-between px-3 py-2 rounded-4 border"
                                         type="button"
@@ -114,11 +114,12 @@
                                         aria-expanded="false">
                                     <div class="d-flex align-items-center gap-2">
                                         <div class="student-avatar text-white fw-bold" style="overflow:hidden;">
-                                            @if($avatarUrl)
-                                                <img src="{{ $avatarUrl }}" alt="{{ $student->name }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
-                                            @else
-                                                {{ Str::upper(Str::substr($student->name ?? 'U', 0, 1)) }}
-                                            @endif
+                                            <?php if($avatarUrl): ?>
+                                                <img src="<?php echo e($avatarUrl); ?>" alt="<?php echo e($student->name); ?>" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                                            <?php else: ?>
+                                                <?php echo e(Str::upper(Str::substr($student->name ?? 'U', 0, 1))); ?>
+
+                                            <?php endif; ?>
                                         </div>
                                         <i class="bi bi-person-fill"></i>
                                     </div>
@@ -126,26 +127,26 @@
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end shadow-sm w-100" aria-labelledby="studentMenuMobile" style="min-width: 220px;">
                                     <li class="px-3 pt-3 pb-2">
-                                        <div class="fw-bold">{{ $student->name }}</div>
-                                        <div class="text-muted small">{{ $student->email }}</div>
+                                        <div class="fw-bold"><?php echo e($student->name); ?></div>
+                                        <div class="text-muted small"><?php echo e($student->email); ?></div>
                                     </li>
                                     <li><hr class="dropdown-divider my-2"></li>
-                                    <li><a class="dropdown-item py-2" href="{{ route('student.profile') }}"><i class="bi bi-person me-2"></i>Hồ sơ</a></li>
-                                    <li><a class="dropdown-item py-2" href="{{ route('student.my-courses') }}"><i class="bi bi-book me-2"></i>Khóa học của tôi</a></li>
-                                    <li><a class="dropdown-item py-2" href="{{ route('student.cart') }}"><i class="bi bi-bag me-2"></i>Giỏ hàng</a></li>
+                                    <li><a class="dropdown-item py-2" href="<?php echo e(route('student.profile')); ?>"><i class="bi bi-person me-2"></i>Hồ sơ</a></li>
+                                    <li><a class="dropdown-item py-2" href="<?php echo e(route('student.my-courses')); ?>"><i class="bi bi-book me-2"></i>Khóa học của tôi</a></li>
+                                    <li><a class="dropdown-item py-2" href="<?php echo e(route('student.cart')); ?>"><i class="bi bi-bag me-2"></i>Giỏ hàng</a></li>
                                     <li><hr class="dropdown-divider my-2"></li>
                                     <li>
-                                        <form action="{{ route('student.logout') }}" method="POST" class="m-0">
-                                            @csrf
+                                        <form action="<?php echo e(route('student.logout')); ?>" method="POST" class="m-0">
+                                            <?php echo csrf_field(); ?>
                                             <button class="dropdown-item text-danger py-2" type="submit"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</button>
                                         </form>
                                     </li>
                                 </ul>
                             </div>
-                        @else
+                        <?php else: ?>
                             <a class="btn btn-primary p-xl-4 p-lg-3 fs-4 fw-bold rounded-4" href="/dang-nhap"
                                 role="button">Đăng nhập</a>
-                        @endauth
+                        <?php endif; ?>
                     </div>
                 </ul>
             </div> 
@@ -155,9 +156,9 @@
                         type="button" data-bs-toggle="modal" data-bs-target="#teachModal" data-teach-modal>
                     Dạy trên OM Edu
                 </button>
-                @auth('student')
-                    @php($student = auth('student')->user())
-                    @php($avatarUrl = $student->avatar ? asset($student->avatar) : null)
+                <?php if(auth()->guard('student')->check()): ?>
+                    <?php ($student = auth('student')->user()); ?>
+                    <?php ($avatarUrl = $student->avatar ? asset($student->avatar) : null); ?>
                     <div class="dropdown d-none d-lg-flex align-items-center">
                         <button class="btn btn-light d-flex align-items-center gap-2 px-3 py-2 rounded-4 border"
                                 type="button"
@@ -165,37 +166,38 @@
                                 data-bs-toggle="dropdown"
                                 aria-expanded="false">
                             <div class="student-avatar text-white fw-bold" style="overflow:hidden;">
-                                @if($avatarUrl)
-                                    <img src="{{ $avatarUrl }}" alt="{{ $student->name }}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
-                                @else
-                                    {{ Str::upper(Str::substr($student->name ?? 'U', 0, 1)) }}
-                                @endif
+                                <?php if($avatarUrl): ?>
+                                    <img src="<?php echo e($avatarUrl); ?>" alt="<?php echo e($student->name); ?>" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                                <?php else: ?>
+                                    <?php echo e(Str::upper(Str::substr($student->name ?? 'U', 0, 1))); ?>
+
+                                <?php endif; ?>
                             </div>
                             <i class="bi bi-person-fill"></i>
                             <i class="bi bi-chevron-down ms-1"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="studentMenuDesktop" style="min-width: 220px;">
                             <li class="px-3 pt-3 pb-2">
-                                <div class="fw-bold">{{ $student->name }}</div>
-                                <div class="text-muted small">{{ $student->email }}</div>
+                                <div class="fw-bold"><?php echo e($student->name); ?></div>
+                                <div class="text-muted small"><?php echo e($student->email); ?></div>
                             </li>
                             <li><hr class="dropdown-divider my-2"></li>
-                            <li><a class="dropdown-item py-2" href="{{ route('student.profile') }}"><i class="bi bi-person me-2"></i>Hồ sơ</a></li>
-                            <li><a class="dropdown-item py-2" href="{{ route('student.my-courses') }}"><i class="bi bi-book me-2"></i>Khóa học của tôi</a></li>
-                            <li><a class="dropdown-item py-2" href="{{ route('student.cart') }}"><i class="bi bi-bag me-2"></i>Giỏ hàng</a></li>
+                            <li><a class="dropdown-item py-2" href="<?php echo e(route('student.profile')); ?>"><i class="bi bi-person me-2"></i>Hồ sơ</a></li>
+                            <li><a class="dropdown-item py-2" href="<?php echo e(route('student.my-courses')); ?>"><i class="bi bi-book me-2"></i>Khóa học của tôi</a></li>
+                            <li><a class="dropdown-item py-2" href="<?php echo e(route('student.cart')); ?>"><i class="bi bi-bag me-2"></i>Giỏ hàng</a></li>
                             <li><hr class="dropdown-divider my-2"></li>
                             <li>
-                                <form action="{{ route('student.logout') }}" method="POST" class="m-0">
-                                    @csrf
+                                <form action="<?php echo e(route('student.logout')); ?>" method="POST" class="m-0">
+                                    <?php echo csrf_field(); ?>
                                     <button class="dropdown-item text-danger py-2" type="submit"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</button>
                                 </form>
                             </li>
                         </ul>
                     </div>
-                @else
+                <?php else: ?>
                     <a class="btn btn-primary px-4 fs-5 rounded-4 fw-bold" style="height:60px; display:flex; align-items:center; border-radius:12px;" href="/dang-nhap"
                         role="button">Đăng nhập</a>
-                @endauth
+                <?php endif; ?>
             </div>
 
         </div>
@@ -203,20 +205,22 @@
 
 
 
-    @if(session('teach_success'))
+    <?php if(session('teach_success')): ?>
         <div class="teach-alert-wrapper">
             <div class="alert alert-success teach-alert" data-autohide="5000" role="alert">
-                {{ session('teach_success') }}
+                <?php echo e(session('teach_success')); ?>
+
             </div>
         </div>
-    @elseif(session('teach_error'))
+    <?php elseif(session('teach_error')): ?>
         <div class="teach-alert-wrapper">
             <div class="alert alert-danger teach-alert" data-autohide="5000" role="alert">
-                {{ session('teach_error') }}
+                <?php echo e(session('teach_error')); ?>
+
             </div>
         </div>
-    @endif
-    @yield('content')
+    <?php endif; ?>
+    <?php echo $__env->yieldContent('content'); ?>
 
 
     <!-- Footer -->
@@ -224,13 +228,13 @@
         <footer class="mt-6 pt-5 border-top border-2 border-custom ">
             <div class="container width-60">
                 <div class="d-flex justify-content-center">
-                    <img class="rounded-circle mx-2" src="{{ asset('img/call.png') }}" alt=""
+                    <img class="rounded-circle mx-2" src="<?php echo e(asset('img/call.png')); ?>" alt=""
                         width="80" height="80">
-                    <img class="rounded-circle mx-2" src="{{ asset('img/fb.png') }}" alt="" width="80"
+                    <img class="rounded-circle mx-2" src="<?php echo e(asset('img/fb.png')); ?>" alt="" width="80"
                         height="80">
-                    <img class="rounded-circle mx-2" src="{{ asset('img/tiktok.png') }}" alt=""
+                    <img class="rounded-circle mx-2" src="<?php echo e(asset('img/tiktok.png')); ?>" alt=""
                         width="80" height="80">
-                    <img class="rounded-circle mx-2" src="{{ asset('img/youtube.png') }}" alt=""
+                    <img class="rounded-circle mx-2" src="<?php echo e(asset('img/youtube.png')); ?>" alt=""
                         width="80" height="80">
                 </div>
                 <p class="text-center mt-5 fs-2">Trang bị những hành trang tuyệt vời từ Organic Marketing.</br>
@@ -255,7 +259,7 @@
 
     <script src="/om-front/js/Js-custom.js"></script>
 
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 
     <!-- Teach modal -->
     <div class="modal fade teach-modal" id="teachModal" tabindex="-1" aria-labelledby="teachModalLabel" aria-hidden="true">
@@ -267,8 +271,8 @@
                 </div>
                 <div class="modal-body">
                     <p class="fs-4 fw-bolder mb-3">Gửi thông tin giáo viên/coach muốn hợp tác</p>
-                    <form method="post" action="{{ route('student.teach.submit') }}" class="row g-3">
-                        @csrf
+                    <form method="post" action="<?php echo e(route('student.teach.submit')); ?>" class="row g-3">
+                        <?php echo csrf_field(); ?>
                         <div class="col-12">
                             <input name="name" type="text" class="form-control p-2 shadow-sm rounded-4 fs-4 ps-3" placeholder="Họ tên" required>
                         </div>
@@ -333,3 +337,4 @@
 
 </html>
 
+<?php /**PATH C:\xampp\htdocs\online-om\resources\views/student/layouts/app.blade.php ENDPATH**/ ?>

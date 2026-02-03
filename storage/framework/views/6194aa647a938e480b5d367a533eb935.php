@@ -1,10 +1,10 @@
-﻿@extends('student.layouts.app')
+﻿
 
-@section('style')
+<?php $__env->startSection('style'); ?>
     <link rel="stylesheet" href="/om-front/css/custom-option.css">
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <!-- Lo trinh hoc coaching -->
     <div class="container mt-6 overflow-hidden">
 
@@ -436,37 +436,39 @@
                         </button>
                     </div>
                     <p class="text-center fs-2 fw-bolder mt-4">Thông tin của bạn</p>
-                    @if (session('coaching_success'))
+                    <?php if(session('coaching_success')): ?>
                         <div class="alert alert-success text-center" data-autohide="5000" role="alert">
-                            {{ session('coaching_success') }}
-                        </div>
-                    @elseif(session('coaching_error'))
-                        <div class="alert alert-danger text-center" data-autohide="5000" role="alert">
-                            {{ session('coaching_error') }}
-                        </div>
-                    @endif
+                            <?php echo e(session('coaching_success')); ?>
 
-                    <form class="form-2 ms-auto me-auto" method="post" action="{{ route('student.coaching.submit') }}">
-                        @csrf
-                        <input type="hidden" name="plan_type" id="plan_type" value="{{ old('plan_type', 'buoi_le') }}">
+                        </div>
+                    <?php elseif(session('coaching_error')): ?>
+                        <div class="alert alert-danger text-center" data-autohide="5000" role="alert">
+                            <?php echo e(session('coaching_error')); ?>
+
+                        </div>
+                    <?php endif; ?>
+
+                    <form class="form-2 ms-auto me-auto" method="post" action="<?php echo e(route('student.coaching.submit')); ?>">
+                        <?php echo csrf_field(); ?>
+                        <input type="hidden" name="plan_type" id="plan_type" value="<?php echo e(old('plan_type', 'buoi_le')); ?>">
 
                         <div class="mb-3">
                             <input name="name" type="text" class="form-control p-2 shadow-sm rounded-4 fs-4 ps-3"
-                                value="{{ old('name') }}" placeholder="Tên của bạn" required>
+                                value="<?php echo e(old('name')); ?>" placeholder="Tên của bạn" required>
                         </div>
 
                         <div class="mb-3">
                             <input name="phone" type="text" class="form-control p-2 shadow-sm rounded-4 fs-4 ps-3"
-                                value="{{ old('phone') }}" placeholder="Số điện thoại của bạn" required>
+                                value="<?php echo e(old('phone')); ?>" placeholder="Số điện thoại của bạn" required>
                         </div>
                         <div class="mb-3">
                             <input name="email" type="email" class="form-control p-2 shadow-sm rounded-4 fs-4 ps-3"
-                                value="{{ old('email') }}" placeholder="Email" required>
+                                value="<?php echo e(old('email')); ?>" placeholder="Email" required>
                         </div>
 
                         <div class="mb-3">
                             <textarea name="message" placeholder="Nội dung bạn muốn đào tạo" required
-                                class="w-100 p-2 bg-transparent border-0 shadow-sm rounded-4 fs-4 ps-3 ">{{ old('message') }}</textarea>
+                                class="w-100 p-2 bg-transparent border-0 shadow-sm rounded-4 fs-4 ps-3 "><?php echo e(old('message')); ?></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary w-100 fw-bold rounded-4 fs-4">Đăng ký
                             Coaching</button>
@@ -483,7 +485,7 @@
 
         </div>
     </div>
-    @push('scripts')
+    <?php $__env->startPush('scripts'); ?>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const planButtons = document.querySelectorAll('.plan-btn');
@@ -500,5 +502,7 @@
                 });
             });
         </script>
-    @endpush
-@endsection
+    <?php $__env->stopPush(); ?>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('student.layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\online-om\resources\views/student/coaching.blade.php ENDPATH**/ ?>

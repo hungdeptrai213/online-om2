@@ -1,8 +1,8 @@
-﻿@extends('student.layouts.app')
+﻿
 
-@section('title', $document->title)
+<?php $__env->startSection('title', $document->title); ?>
 
-@section('style')
+<?php $__env->startSection('style'); ?>
     <style>
         .document-detail-modal {
            margin: 5.5rem auto 2.5rem;
@@ -300,10 +300,10 @@
             }
         }
     </style>
-@endsection
+<?php $__env->stopSection(); ?>
 
-@section('content')
-    @php
+<?php $__env->startSection('content'); ?>
+    <?php
         $thumb = $document->thumbnail;
         $thumbUrl =
             $thumb && \Illuminate\Support\Str::startsWith($thumb, ['http://', 'https://'])
@@ -311,15 +311,15 @@
                 : ($thumb
                     ? asset($thumb)
                     : asset('om-front/img/Open Document.png'));
-    @endphp
+    ?>
     <div class="container container-fluid px-2 px-md-3 px-lg-4">
         <div class="document-detail-modal">
             <div class="document-detail-header d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
                 <div>
                     <p class="text-uppercase text-muted mb-1" style="letter-spacing:0.08em;">Tài liệu chuyên sâu</p>
-                    <h1 class="fs-2 fw-bold mb-0">{{ $document->title }}</h1>
+                    <h1 class="fs-2 fw-bold mb-0"><?php echo e($document->title); ?></h1>
                 </div>
-                <a href="{{ route('student.materials') }}" class="btn btn-outline-dark" style="border-radius:999px;">← Trở về
+                <a href="<?php echo e(route('student.materials')); ?>" class="btn btn-outline-dark" style="border-radius:999px;">← Trở về
                     kho tài liệu</a>
             </div>
             <div class="row gx-5 gy-5">
@@ -355,62 +355,62 @@
                             <div class="book-lock-overlay" id="lockOverlay">
                                 <button type="button" class="close-lock" aria-label="Đóng">×</button>
                                 <p class="fs-4 mb-2">Trang đã bị khóa, hãy mua để xem toàn bộ nội dung.</p>
-                                <a href="{{ route('student.documents.cart', ['document' => $document->id]) }}"
+                                <a href="<?php echo e(route('student.documents.cart', ['document' => $document->id])); ?>"
                                     class="btn btn-success mt-2 px-4">Mua tài liệu</a>
                             </div>
                             <div class="flip-book" id="flipBook"></div>
                         </div>
                         <div id="pdfMessage" class="pdf-message">Đang tải tài liệu...</div>
-                        {{-- <div class="text-center mt-3">
-                            <a id="openOriginalLink" href="{{ $originalLink }}" target="_blank" rel="noreferrer" class="text-decoration-underline small">Mở file gốc (trường hợp PDF không hiển thị)</a>
-                        </div> --}}
+                        
                     </div>
                 </div>
                 <div class="col-lg-3">
                     <div class="info-panel shadow">
-                        <img src="{{ $thumbUrl }}" alt="Ảnh đại diện {{ $document->title }}">
+                        <img src="<?php echo e($thumbUrl); ?>" alt="Ảnh đại diện <?php echo e($document->title); ?>">
                         <div>
-                            <p class="fs-5 fw-semibold mb-1">{{ $document->title }}</p>
+                            <p class="fs-5 fw-semibold mb-1"><?php echo e($document->title); ?></p>
                             <p class="info-meta mb-1">Ngày phát hành:
-                                {{ $document->published_at ? $document->published_at->format('d/m/Y') : 'Chưa rõ' }}</p>
+                                <?php echo e($document->published_at ? $document->published_at->format('d/m/Y') : 'Chưa rõ'); ?></p>
                             <p class="fs-5 mb-1">
-                                {{ $document->price > 0 ? 'Giá: ' . number_format($document->price, 0, ',', '.') . ' VNĐ' : 'Miễn phí' }}
+                                <?php echo e($document->price > 0 ? 'Giá: ' . number_format($document->price, 0, ',', '.') . ' VNĐ' : 'Miễn phí'); ?>
+
                             </p>
                             <p class="text-muted" style="font-size:0.95rem; min-height:68px;">
-                                {{ $document->description ?: 'Đang cập nhật mô tả chi tiết.' }}
+                                <?php echo e($document->description ?: 'Đang cập nhật mô tả chi tiết.'); ?>
+
                             </p>
                         </div>
                         <div class="d-flex flex-wrap gap-2">
-                            @foreach ($document->topics as $topic)
-                                <span class="topic-chip">#{{ $topic->name }}</span>
-                            @endforeach
+                            <?php $__currentLoopData = $document->topics; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $topic): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <span class="topic-chip">#<?php echo e($topic->name); ?></span>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </div>
                         <div class="d-grid">
-                            @if ($document->price > 0)
-                                @if ($isPurchased)
-                                    <a href="{{ $document->link }}" target="_blank" rel="noreferrer"
+                            <?php if($document->price > 0): ?>
+                                <?php if($isPurchased): ?>
+                                    <a href="<?php echo e($document->link); ?>" target="_blank" rel="noreferrer"
                                         class="btn btn-success">Tải tài liệu bạn đã mua</a>
-                                @else
-                                    <a href="{{ route('student.documents.cart', ['document' => $document->id]) }}"
+                                <?php else: ?>
+                                    <a href="<?php echo e(route('student.documents.cart', ['document' => $document->id])); ?>"
                                         class="btn btn-primary">Mua tài liệu</a>
-                                @endif
-                            @else
-                                <a href="{{ $document->link }}" id="freeDownloadBtn"
-                                    data-download-link="{{ $originalLink }}" class="btn btn-success">Tải miễn phí</a>
-                            @endif
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <a href="<?php echo e($document->link); ?>" id="freeDownloadBtn"
+                                    data-download-link="<?php echo e($originalLink); ?>" class="btn btn-success">Tải miễn phí</a>
+                            <?php endif; ?>
                         </div>
-                        @if ($isPurchased && $document->price > 0)
+                        <?php if($isPurchased && $document->price > 0): ?>
                             <p class="text-success small mb-0">Bạn đã thanh toán tài liệu này. Kiểm tra email để nhận file
                                 trực tiếp và hướng dẫn tải.</p>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
 
-{{-- Modal đợi tải cho tài liệu miễn phí --}}
+
 <div class="modal fade" id="downloadWaitModal" tabindex="-1" aria-labelledby="downloadWaitModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="width:100%;max-width:720px;">
@@ -431,13 +431,13 @@
     </div>
 </div>
 
-@push('scripts')
-    <link rel="stylesheet" href="{{ asset('vendor/page-flip/page-flip.css') }}">
+<?php $__env->startPush('scripts'); ?>
+    <link rel="stylesheet" href="<?php echo e(asset('vendor/page-flip/page-flip.css')); ?>">
     <script>
         // Ưu tiên file local, fallback qua 3 CDN nếu lỗi mạng
         (function loadPageFlip() {
             const sources = [
-                '{{ asset('vendor/page-flip/page-flip.browser.js') }}',
+                '<?php echo e(asset('vendor/page-flip/page-flip.browser.js')); ?>',
                 'https://unpkg.com/page-flip@2.0.7/dist/js/page-flip.browser.js',
                 'https://cdnjs.cloudflare.com/ajax/libs/page-flip/2.0.7/js/page-flip.browser.js',
                 'https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js'
@@ -462,14 +462,14 @@
             const pageTotalEl = document.querySelector('.page-total');
             const pageStateEl = document.querySelector('.page-state');
             const pageOrientationEl = document.querySelector('.page-orientation');
-            const pdfUrl = @json($pdfUrl);
-            const coverUrl = @json($thumbUrl);
+            const pdfUrl = <?php echo json_encode($pdfUrl, 15, 512) ?>;
+            const coverUrl = <?php echo json_encode($thumbUrl, 15, 512) ?>;
             const flipBookEl = document.getElementById('flipBook');
             const bookFrame = document.getElementById('bookFrame');
             const lockOverlay = document.getElementById('lockOverlay');
             const lockCloseBtn = lockOverlay?.querySelector('.close-lock');
             const fullscreenBtn = document.getElementById('fullscreenBtn');
-            const isLocked = {{ $document->price > 0 && !$isPurchased ? 'true' : 'false' }};
+            const isLocked = <?php echo e($document->price > 0 && !$isPurchased ? 'true' : 'false'); ?>;
             const maxPreviewPages = 4;
             const freeDownloadBtn = document.getElementById('freeDownloadBtn');
             const downloadModalEl = document.getElementById('downloadWaitModal');
@@ -710,7 +710,7 @@
                             div.innerHTML = `
                                 <div class="page-content" style="display:flex;align-items:center;justify-content:center;height:100%;background:linear-gradient(135deg,#f8f3eb,#ece5da);color:#2f2a25;padding:18px;text-align:center;flex-direction:column;gap:10px;">
                                     <span class="fw-semibold">Trang đã bị khóa. Mua để xem toàn bộ.</span>
-                                    <a href="{{ route('student.documents.cart', ['document' => $document->id]) }}" class="btn btn-success btn-sm px-3 mt-1">Mua tài liệu</a>
+                                    <a href="<?php echo e(route('student.documents.cart', ['document' => $document->id])); ?>" class="btn btn-success btn-sm px-3 mt-1">Mua tài liệu</a>
                                 </div>`;
                         } else {
                             div.innerHTML = `
@@ -782,4 +782,6 @@
                 });
         });
     </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('student.layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\online-om\resources\views/student/documents/show.blade.php ENDPATH**/ ?>
